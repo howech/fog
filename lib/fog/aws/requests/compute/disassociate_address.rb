@@ -2,7 +2,6 @@ module Fog
   module Compute
     class AWS
       class Real
-
         require 'fog/aws/parsers/compute/basic'
 
         # Disassociate an elastic IP address from its instance (if any)
@@ -27,19 +26,18 @@ module Fog
             :parser         => Fog::Parsers::Compute::AWS::Basic.new
           )
         end
-
       end
 
       class Mock
-
         def disassociate_address(public_ip)
           response = Excon::Response.new
           response.status = 200
           if address = self.data[:addresses][public_ip]
             instance_id = address['instanceId']
-            instance = self.data[:instances][instance_id]
-            instance['ipAddress']         = instance['originalIpAddress']
-            instance['dnsName']           = Fog::AWS::Mock.dns_name_for(instance['ipAddress'])
+            if instance = self.data[:instances][instance_id]
+              instance['ipAddress']         = instance['originalIpAddress']
+              instance['dnsName']           = Fog::AWS::Mock.dns_name_for(instance['ipAddress'])
+            end
             address['instanceId'] = nil
             response.status = 200
             response.body = {
@@ -51,7 +49,6 @@ module Fog
             raise Fog::Compute::AWS::Error.new("AuthFailure => The address '#{public_ip}' does not belong to you.")
           end
         end
-
       end
     end
   end

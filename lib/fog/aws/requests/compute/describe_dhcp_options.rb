@@ -2,7 +2,6 @@ module Fog
   module Compute
     class AWS
       class Real
-
         require 'fog/aws/parsers/compute/describe_dhcp_options'
 
         # Describe all or specified dhcp_options
@@ -38,7 +37,7 @@ module Fog
           }.merge!(params))
         end
       end
-      
+
       class Mock
         def describe_dhcp_options(filters = {})
           Excon::Response.new.tap do |response|

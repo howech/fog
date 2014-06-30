@@ -1,5 +1,4 @@
-require 'fog/rackspace'
-require 'fog/compute'
+require 'fog/rackspace/core'
 
 module Fog
   module Compute
@@ -11,7 +10,6 @@ module Fog
       class BadRequest < Fog::Rackspace::Errors::BadRequest; end
 
       class InvalidStateException < ::RuntimeError
-
         attr_reader :desired_state
         attr_reader :current_state
 
@@ -45,18 +43,27 @@ module Fog
       recognizes :rackspace_compute_url
 
       model_path 'fog/rackspace/models/compute_v2'
+
       model :server
       collection :servers
+
       model :flavor
       collection :flavors
+
       model :image
       collection :images
+
       model :attachment
       collection :attachments
+
       model :network
       collection :networks
+
       model :key_pair
       collection :key_pairs
+
+      model :virtual_interface
+      collection :virtual_interfaces
 
       request_path 'fog/rackspace/requests/compute_v2'
       request :list_servers
@@ -107,6 +114,10 @@ module Fog
       request :delete_keypair
       request :get_keypair
 
+      request :list_virtual_interfaces
+      request :create_virtual_interface
+      request :delete_virtual_interface
+
       class Mock < Fog::Rackspace::Service
         include Fog::Rackspace::MockData
 
@@ -124,7 +135,7 @@ module Fog
           headers = params[:headers] || {}
 
           response = Excon::Response.new(:body => body, :headers => headers, :status => status)
-          if params.has_key?(:expects) && ![*params[:expects]].include?(response.status)
+          if params.key?(:expects) && ![*params[:expects]].include?(response.status)
             raise(Excon::Errors.status_error(params, response))
           else response
           end
@@ -132,7 +143,6 @@ module Fog
       end
 
       class Real < Fog::Rackspace::Service
-
         def initialize(options = {})
           @rackspace_api_key = options[:rackspace_api_key]
           @rackspace_username = options[:rackspace_username]
@@ -146,7 +156,7 @@ module Fog
           deprecation_warnings(options)
 
           @persistent = options[:persistent] || false
-          @connection = Fog::Connection.new(endpoint_uri.to_s, @persistent, @connection_options)
+          @connection = Fog::Core::Connection.new(endpoint_uri.to_s, @persistent, @connection_options)
         end
 
         def request(params, parse_json = true)
@@ -175,7 +185,7 @@ module Fog
         end
 
         def request_id_header
-          "X-Compute-Request-Id"
+          "x-compute-request-id"
         end
 
         def region
@@ -221,7 +231,7 @@ module Fog
           end
 
           unless options[:rackspace_region]
-            Fog::Logger.deprecation("Default region support will be removed in an upcoming release. Please switch to manually setting your endpoint. This requires settng the :rackspace_region option")
+            Fog::Logger.deprecation("Default region support will be removed in an upcoming release. Please switch to manually setting your endpoint. This requires setting the :rackspace_region option")
           end
         end
 

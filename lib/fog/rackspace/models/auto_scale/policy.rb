@@ -5,9 +5,8 @@ module Fog
   module Rackspace
     class AutoScale
       class Policy < Fog::Model
-
         # @!attribute [r] id
-        # @return [String] The policy id   
+        # @return [String] The policy id
         identity :id
 
         # @!attribute [r] group
@@ -90,7 +89,7 @@ module Fog
 
         # Creates policy
         # * requires attributes: :name, :type, :cooldown
-        # 
+        #
         # @return [Boolean] returns true if policy is being created
         #
         # @raise [Fog::Rackspace::AutoScale:::NotFound] - HTTP 404
@@ -215,7 +214,6 @@ module Fog
             :group  => group
           })
         end
-
       end
     end
   end

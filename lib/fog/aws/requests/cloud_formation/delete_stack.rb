@@ -2,7 +2,6 @@ module Fog
   module AWS
     class CloudFormation
       class Real
-
         require 'fog/aws/parsers/cloud_formation/basic'
 
         # Delete a stack.
@@ -12,7 +11,7 @@ module Fog
         # @return [Excon::Response]
         #
         # @see http://docs.amazonwebservices.com/AWSCloudFormation/latest/APIReference/API_DeleteStack.html
-        
+
         def delete_stack(stack_name)
           request(
             'Action'    => 'DeleteStack',
@@ -20,7 +19,6 @@ module Fog
             :parser     => Fog::Parsers::AWS::CloudFormation::Basic.new
           )
         end
-
       end
     end
   end

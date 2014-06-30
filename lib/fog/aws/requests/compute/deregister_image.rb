@@ -2,13 +2,12 @@ module Fog
   module Compute
     class AWS
       class Real
-
         require 'fog/aws/parsers/compute/deregister_image'
 
         # deregister an image
         #
         # ==== Parameters
-        # * image_id<~String> - Id of image to deregister 
+        # * image_id<~String> - Id of image to deregister
         #
         # ==== Returns
         # * response<~Excon::Response>:
@@ -24,14 +23,12 @@ module Fog
             :parser       => Fog::Parsers::Compute::AWS::DeregisterImage.new
           )
         end
-
       end
 
       class Mock
-
         def deregister_image(image_id)
           response = Excon::Response.new
-          if image_id 
+          if image_id
             response.status = 200
             response.body = {
               'requestId' => Fog::AWS::Mock.request_id,
@@ -46,7 +43,6 @@ module Fog
             raise Fog::Compute::AWS::Error.new(message)
           end
         end
-
       end
     end
   end

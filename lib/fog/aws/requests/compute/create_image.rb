@@ -2,7 +2,6 @@ module Fog
   module Compute
     class AWS
       class Real
-
         require 'fog/aws/parsers/compute/create_image'
 
         # Create a bootable EBS volume AMI
@@ -24,12 +23,13 @@ module Fog
           params = {}
           block_device_mappings = options[:block_device_mappings] ||  []
 
-          params.merge!Fog::AWS.indexed_param('BlockDeviceMapping.%d.DeviceName', block_device_mappings.map{|mapping| mapping['DeviceName']}) 
+          params.merge!Fog::AWS.indexed_param('BlockDeviceMapping.%d.DeviceName', block_device_mappings.map{|mapping| mapping['DeviceName']})
           params.merge!Fog::AWS.indexed_param('BlockDeviceMapping.%d.NoDevice', block_device_mappings.map{|mapping| mapping['NoDevice']})
           params.merge!Fog::AWS.indexed_param('BlockDeviceMapping.%d.VirtualName', block_device_mappings.map{|mapping| mapping['VirtualName']})
           params.merge!Fog::AWS.indexed_param('BlockDeviceMapping.%d.Ebs.SnapshotId', block_device_mappings.map{|mapping| mapping['Ebs.SnapshotId']})
           params.merge!Fog::AWS.indexed_param('BlockDeviceMapping.%d.Ebs.DeleteOnTermination', block_device_mappings.map{|mapping| mapping['Ebs.DeleteOnTermination']})
           params.merge!Fog::AWS.indexed_param('BlockDeviceMapping.%d.Ebs.VolumeType', block_device_mappings.map{|mapping| mapping['Ebs.VolumeType']})
+          params.merge!Fog::AWS.indexed_param('BlockDeviceMapping.%d.Ebs.Encrypted', block_device_mappings.map{|mapping| mapping['Ebs.Encrypted']})
           params.merge!Fog::AWS.indexed_param('BlockDeviceMapping.%d.Ebs.Iops', block_device_mappings.map{|mapping| mapping['Ebs.Iops']})
           params.reject!{|k,v| v.nil?}
 
@@ -45,21 +45,21 @@ module Fog
       end
 
       class Mock
-        
         # Usage
-        # 
+        #
         # AWS[:compute].create_image("i-ac65ee8c", "test", "something")
         #
-        
+
         def create_image(instance_id, name, description, no_reboot = false, options = {})
           params = {}
           block_device_mappings = options[:block_device_mappings] || []
-          params.merge!Fog::AWS.indexed_param('BlockDeviceMapping.%d.DeviceName', block_device_mappings.map{|mapping| mapping['DeviceName']}) 
+          params.merge!Fog::AWS.indexed_param('BlockDeviceMapping.%d.DeviceName', block_device_mappings.map{|mapping| mapping['DeviceName']})
           params.merge!Fog::AWS.indexed_param('BlockDeviceMapping.%d.NoDevice', block_device_mappings.map{|mapping| mapping['NoDevice']})
           params.merge!Fog::AWS.indexed_param('BlockDeviceMapping.%d.VirtualName', block_device_mappings.map{|mapping| mapping['VirtualName']})
           params.merge!Fog::AWS.indexed_param('BlockDeviceMapping.%d.Ebs.SnapshotId', block_device_mappings.map{|mapping| mapping['Ebs.SnapshotId']})
           params.merge!Fog::AWS.indexed_param('BlockDeviceMapping.%d.Ebs.DeleteOnTermination', block_device_mappings.map{|mapping| mapping['Ebs.DeleteOnTermination']})
           params.merge!Fog::AWS.indexed_param('BlockDeviceMapping.%d.Ebs.VolumeType', block_device_mappings.map{|mapping| mapping['Ebs.VolumeType']})
+          params.merge!Fog::AWS.indexed_param('BlockDeviceMapping.%d.Ebs.Encrypted', block_device_mappings.map{|mapping| mapping['Ebs.Encrypted']})
           params.merge!Fog::AWS.indexed_param('BlockDeviceMapping.%d.Ebs.Iops', block_device_mappings.map{|mapping| mapping['Ebs.Iops']})
           params.reject!{|k,v| v.nil?}
 
@@ -85,7 +85,6 @@ module Fog
           end
           response
         end
-
       end
     end
   end

@@ -2,7 +2,6 @@ module Fog
   module Rackspace
     class Monitoring
       class Real
-
         def get_processes_info(agent_id)
           request(
             :expects  => [200, 203],
@@ -14,7 +13,6 @@ module Fog
 
       class Mock
         def get_processes_info(agent_id)
-
           memory_major_faults = Fog::Mock.random_numbers(1).to_i
           memory_minor_faults = Fog::Mock.random_numbers(3).to_i
           memory_page_faults = memory_major_faults+memory_minor_faults
@@ -22,7 +20,7 @@ module Fog
           if agent_id == -1
             raise Fog::Rackspace::Monitoring::BadRequest
           end
-          
+
           response = Excon::Response.new
           response.status = 200
           response.body = {

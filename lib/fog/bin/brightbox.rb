@@ -1,11 +1,10 @@
 class Brightbox < Fog::Bin
   class << self
-
     def class_for(key)
       case key
       when :compute
         Fog::Compute::Brightbox
-      else 
+      else
         raise ArgumentError, "Unrecognized service: #{key}"
       end
     end
@@ -30,6 +29,5 @@ class Brightbox < Fog::Bin
     def services
       Fog::Brightbox.services
     end
-
   end
 end

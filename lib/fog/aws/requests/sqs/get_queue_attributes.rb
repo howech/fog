@@ -2,7 +2,6 @@ module Fog
   module AWS
     class SQS
       class Real
-
         require 'fog/aws/parsers/sqs/get_queue_attributes'
 
         # Get attributes of a queue
@@ -23,16 +22,14 @@ module Fog
             :parser         => Fog::Parsers::AWS::SQS::GetQueueAttributes.new
           })
         end
-
       end
-      
+
       class Mock
-        
         def get_queue_attributes(queue_url, attribute_name)
           Excon::Response.new.tap do |response|
             if (queue = data[:queues][queue_url])
               response.status = 200
-              
+
               response.body = {
                 'ResponseMetadata' => {
                   'RequestId' => Fog::AWS::Mock.request_id
@@ -45,7 +42,6 @@ module Fog
             end
           end
         end
-        
       end
     end
   end

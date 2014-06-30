@@ -2,7 +2,6 @@ module Fog
   module AWS
     class RDS
       class Real
-
         require 'fog/aws/parsers/rds/create_db_instance_read_replica'
 
         # create a read replica db instance
@@ -10,7 +9,7 @@ module Fog
         # ==== Parameters
         # * DBInstanceIdentifier <~String> - name of the db instance to create
         # * SourceDBInstanceIdentifier <~String> - name of the db instance that will be the source. Must have backup retention on
-        # * AutoMinorVersionUpgrade <~Boolean> Indicates that minor version upgrades will be applied automatically to the DB Instance during the maintenance window 
+        # * AutoMinorVersionUpgrade <~Boolean> Indicates that minor version upgrades will be applied automatically to the DB Instance during the maintenance window
         # * AvailabilityZone <~String> The availability zone to create the instance in
         # * DBInstanceClass <~String> The new compute and memory capacity of the DB Instance
         # * Port <~Integer> The port number on which the database accepts connections.
@@ -18,8 +17,6 @@ module Fog
         # * response<~Excon::Response>:
         #   * body<~Hash>:
         def create_db_instance_read_replica(instance_identifier, source_identifier, options={})
-          
-    
           request({
             'Action'  => 'CreateDBInstanceReadReplica',
             'DBInstanceIdentifier' => instance_identifier,
@@ -27,11 +24,9 @@ module Fog
             :parser   => Fog::Parsers::AWS::RDS::CreateDBInstanceReadReplica.new,
           }.merge(options))
         end
-
       end
 
       class Mock
-
         def create_db_instance_read_replica(instance_identifier, source_identifier, options={})
           # TODO: throw error when instance_identifier already exists,
           # or source_identifier doesn't exist
@@ -51,6 +46,7 @@ module Fog
             'Engine' => source['Engine'],
             'EngineVersion' => options['EngineVersion'] || '5.5.12',
             'InstanceCreateTime' => nil,
+            'Iops' => source['Iops'],
             'LatestRestorableTime' => nil,
             'LicenseModel' => 'general-public-license',
             'MasterUsername' => source['MasterUsername'],
@@ -75,7 +71,6 @@ module Fog
 
           response
         end
-
       end
     end
   end

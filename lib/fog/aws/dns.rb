@@ -1,5 +1,4 @@
-require 'fog/aws'
-require 'fog/dns'
+require 'fog/aws/core'
 
 module Fog
   module DNS
@@ -25,7 +24,6 @@ module Fog
       request :get_change
 
       class Mock
-
         def self.data
           @data ||= Hash.new do |hash, region|
             hash[region] = Hash.new do |region_hash, key|
@@ -98,9 +96,9 @@ module Fog
           @persistent = options.fetch(:persistent, true)
           @port       = options[:port]        || 443
           @scheme     = options[:scheme]      || 'https'
-          @version    = options[:version]     || '2012-02-29'
+          @version    = options[:version]     || '2013-04-01'
 
-          @connection = Fog::Connection.new("#{@scheme}://#{@host}:#{@port}#{@path}", @persistent, @connection_options)
+          @connection = Fog::XML::Connection.new("#{@scheme}://#{@host}:#{@port}#{@path}", @persistent, @connection_options)
         end
 
         def reload

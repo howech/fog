@@ -1,5 +1,4 @@
-require 'fog/atmos'
-require 'fog/storage'
+require 'fog/atmos/core'
 
 module Fog
   module Storage
@@ -72,7 +71,6 @@ module Fog
         def request(options)
           raise "Atmos Storage mocks not implemented"
         end
-
       end
 
       class Real
@@ -84,7 +82,7 @@ module Fog
           @hmac               = Fog::HMAC.new('sha1', @storage_secret_decoded)
           @persistent = options.fetch(:persistent, false)
 
-          @connection = Fog::Connection.new("#{@prefix}://#{@storage_host}:#{@storage_port}",
+          @connection = Fog::XML::Connection.new("#{@prefix}://#{@storage_host}:#{@storage_port}",
               @persistent, @connection_options)
         end
 
@@ -157,8 +155,8 @@ module Fog
 
           params.delete(:host) #invalid excon request parameter
 
-          parse = params.delete(:parse)        
-        
+          parse = params.delete(:parse)
+
           begin
             response = @connection.request(params, &block)
           rescue Excon::Errors::HTTPStatusError => error
@@ -180,7 +178,6 @@ module Fog
           end
           response
         end
-
       end
     end
   end

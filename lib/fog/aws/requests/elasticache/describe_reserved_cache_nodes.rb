@@ -1,8 +1,7 @@
 module Fog
   module AWS
-    class Elasticache 
+    class Elasticache
       class Real
-
         require 'fog/aws/parsers/elasticache/describe_reserved_cache_nodes'
 
         # Describe all or specified reserved Elasticache nodes
@@ -21,21 +20,18 @@ module Fog
           if opts[:max_records]
             params['MaxRecords'] = opts[:max_records]
           end
-          
+
           request({
             'Action'  => 'DescribeReservedCacheNodes',
             :parser   => Fog::Parsers::AWS::Elasticache::DescribeReservedCacheNodes.new
           }.merge(params))
         end
-
       end
 
       class Mock
-
         def describe_db_reserved_instances(identifier=nil, opts={})
           Fog::Mock.not_implemented
         end
-
       end
     end
   end

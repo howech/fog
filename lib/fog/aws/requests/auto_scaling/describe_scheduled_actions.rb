@@ -1,9 +1,7 @@
 module Fog
   module AWS
     class AutoScaling
-
       class Real
-
         require 'fog/aws/parsers/auto_scaling/describe_scheduled_actions'
 
         # List all the actions scheduled for your Auto Scaling group that
@@ -47,8 +45,8 @@ module Fog
         #           group.
         #         * 'MinSize'<~Integer> - The minimum size of the Auto Scaling
         #           group.
-        #         * 'Recurrence'<~String> - The time when recurring future 
-        #           actions will start. Start time is specified by the user 
+        #         * 'Recurrence'<~String> - The time when recurring future
+        #           actions will start. Start time is specified by the user
         #           following the Unix cron syntax format.
         #         * 'ScheduledActionARN'<~String> - The Amazon Resource Name
         #           (ARN) of this scheduled action.
@@ -72,17 +70,13 @@ module Fog
             :parser  => Fog::Parsers::AWS::AutoScaling::DescribeScheduledActions.new
           }.merge!(options))
         end
-
       end
 
       class Mock
-
         def describe_scheduled_actions(options = {})
           Fog::Mock.not_implemented
         end
-
       end
-
     end
   end
 end

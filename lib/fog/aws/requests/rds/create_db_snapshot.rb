@@ -2,7 +2,6 @@ module Fog
   module AWS
     class RDS
       class Real
-
         require 'fog/aws/parsers/rds/create_db_snapshot'
 
         # creates a db snapshot
@@ -21,11 +20,9 @@ module Fog
             :parser   => Fog::Parsers::AWS::RDS::CreateDBSnapshot.new
           })
         end
-
       end
 
       class Mock
-
         def create_db_snapshot(identifier, name)
           response = Excon::Response.new
           if data[:snapshots][name]
@@ -41,13 +38,13 @@ module Fog
 
           snapshot_data = {
             'Status'               => 'creating',
-            'SnapshotType'         => 'manual', 
+            'SnapshotType'         => 'manual',
             'DBInstanceIdentifier' => identifier,
             'DBSnapshotIdentifier' => name,
             'InstanceCreateTime'   => Time.now
           }
           # Copy attributes from server
-          %w(Engine EngineVersion AvailabilityZone AllocatedStorage MasterUsername InstanceCreateTime).each do |key|
+          %w(Engine EngineVersion AvailabilityZone AllocatedStorage Iops MasterUsername InstanceCreateTime).each do |key|
             snapshot_data[key] = server_data[key]
           end
           snapshot_data['Port'] = server_data['Endpoint']['Port']
@@ -64,7 +61,6 @@ module Fog
           # SnapshotCreateTime is not part of the response.
           self.data[:snapshots][name]['SnapshotCreateTime'] = Time.now
           response
-
         end
       end
     end

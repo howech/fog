@@ -2,11 +2,10 @@ module Fog
   module AWS
     class IAM
       class Real
-
         require 'fog/aws/parsers/iam/login_profile'
 
         # Retrieves the login profile for a user
-        # 
+        #
         # http://docs.amazonwebservices.com/IAM/latest/APIReference/API_CreateLoginProfile.html
         # ==== Parameters
         # * user_name<~String> - Name of user to retrieve the login profile for
@@ -28,7 +27,6 @@ module Fog
             :parser     => Fog::Parsers::AWS::IAM::LoginProfile.new
           })
         end
-
       end
     end
   end

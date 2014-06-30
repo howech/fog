@@ -2,7 +2,6 @@ module Fog
   module Rackspace
     class Monitoring
       class Real
-
         def get_network_interfaces_info(agent_id)
           request(
             :expects  => [200, 203],
@@ -14,11 +13,10 @@ module Fog
 
       class Mock
         def get_network_interfaces_info(agent_id)
-
           if agent_id == -1
             raise Fog::Rackspace::Monitoring::BadRequest
           end
-          
+
           response = Excon::Response.new
           response.status = 200
           response.body = {
@@ -67,7 +65,7 @@ module Fog
                 "tx_packets"  => Fog::Mock.random_numbers(7).to_i,
                 "tx_bytes"    => Fog::Mock.random_numbers(9).to_i,
                 "flags"       => Fog::Mock.random_numbers(4).to_i,
-              }              
+              }
             ]
           }
           response.headers = {

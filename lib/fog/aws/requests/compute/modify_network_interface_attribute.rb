@@ -2,7 +2,6 @@ module Fog
   module Compute
     class AWS
       class Real
-
         require 'fog/aws/parsers/compute/basic'
 
         # Modifies a network interface attribute value
@@ -42,13 +41,13 @@ module Fog
           }.merge!(params))
         end
       end
-      
+
       class Mock
         def modify_network_interface_attribute(network_interface_id, attribute, value)
           response = Excon::Response.new
           if self.data[:network_interfaces][network_interface_id]
             nic = self.data[:network_interfaces][network_interface_id]
-            
+
             case attribute
             when 'description'
               nic['description'] = value.clone

@@ -2,7 +2,6 @@ module Fog
   module Compute
     class AWS
       class Real
-
         require 'fog/aws/parsers/compute/create_route_table'
 
         # Creates a route table for the specified VPC.
@@ -32,7 +31,7 @@ module Fog
           })
         end
       end
-      
+
       class Mock
         def create_route_table(vpc_id)
           response = Excon::Response.new
@@ -45,9 +44,9 @@ module Fog
               'routeSet' => [{
                 "destinationCidrBlock" => vpc["cidrBlock"],
                 "gatewayId" => "local",
-                "instanceId"=>nil, 
-                "instanceOwnerId"=>nil, 
-                "networkInterfaceId"=>nil, 
+                "instanceId"=>nil,
+                "instanceOwnerId"=>nil,
+                "networkInterfaceId"=>nil,
                 "state" => "pending",
                 "origin" => "CreateRouteTable"
               }],
@@ -62,7 +61,7 @@ module Fog
             response
           else
             raise Fog::Compute::AWS::NotFound.new("The vpc ID '#{vpc_id}' does not exist")
-          end 
+          end
         end
       end
     end

@@ -1,6 +1,5 @@
 class AWS < Fog::Bin
   class << self
-
     def class_for(key)
       case key
       when :auto_scaling
@@ -90,7 +89,7 @@ class AWS < Fog::Bin
         when :iam
           Fog::AWS::IAM.new
         when :redshift
-          Fog::AWS::Redshift.new          
+          Fog::AWS::Redshift.new
         when :rds
           Fog::AWS::RDS.new
         when :eu_storage
@@ -118,6 +117,5 @@ class AWS < Fog::Bin
     def services
       Fog::AWS.services
     end
-
   end
 end

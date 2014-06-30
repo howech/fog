@@ -2,12 +2,11 @@ module Fog
   module Compute
     class AWS
       class Real
-
         require 'fog/aws/parsers/compute/basic'
-        # 
+        #
         #
         # ==== Parameters
-        # * dhcp_options_id<~String> - The ID of the DHCP options you want to associate with the VPC, or "default" if you want the VPC 
+        # * dhcp_options_id<~String> - The ID of the DHCP options you want to associate with the VPC, or "default" if you want the VPC
         #   to use no DHCP options.
         # * vpc_id<~String> - The ID of the VPC
         #
@@ -27,11 +26,9 @@ module Fog
             :parser       => Fog::Parsers::Compute::AWS::Basic.new
           )
         end
-
       end
 
       class Mock
-
         def associate_dhcp_options(dhcp_options_id, vpc_id)
           response = Excon::Response.new
           if dhcp_options_id && vpc_id
@@ -50,7 +47,6 @@ module Fog
             raise Fog::Compute::AWS::Error.new(message)
           end
         end
-
       end
     end
   end

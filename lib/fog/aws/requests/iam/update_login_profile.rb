@@ -2,11 +2,10 @@ module Fog
   module AWS
     class IAM
       class Real
-
         require 'fog/aws/parsers/iam/basic'
 
         # Updates a login profile for a user
-        # 
+        #
         # http://docs.amazonwebservices.com/IAM/latest/APIReference/API_UpdateLoginProfile.html
         # ==== Parameters
         # * user_name<~String> - Name of user to change the login profile for
@@ -26,7 +25,6 @@ module Fog
             :parser     => Fog::Parsers::AWS::IAM::Basic.new
           })
         end
-
       end
     end
   end

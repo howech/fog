@@ -3,11 +3,9 @@ require 'fog/compute/models/server'
 module Fog
   module Compute
     class Bluebox
-
       class BlockInstantiationError < StandardError; end
 
       class Server < Fog::Compute::Server
-
         identity :id
 
         attribute :cpu
@@ -21,6 +19,7 @@ module Fog
         attribute :state,       :aliases => "status"
         attribute :storage
         attribute :template
+        attribute :ipv6_only
 
         attr_accessor :hostname, :password, :lb_applications, :lb_services, :lb_backends
 
@@ -93,6 +92,7 @@ module Fog
 
           options['username'] = username
           options['hostname'] = hostname if @hostname
+          options['ipv6_only'] = ipv6_only if ipv6_only
           data = service.create_block(flavor_id, image_id, location_id, options)
           merge_attributes(data.body)
           true
@@ -100,7 +100,7 @@ module Fog
 
         def setup(credentials = {})
           requires :identity, :ips, :public_key, :username
-          Fog::SSH.new(public_ip_address, username, credentials).run([
+          Fog::SSH.new(ssh_ip_address, username, credentials).run([
             %{mkdir .ssh},
             %{echo "#{public_key}" >> ~/.ssh/authorized_keys},
             %{passwd -l #{username}},
@@ -114,9 +114,7 @@ module Fog
         def username
           @username ||= 'deploy'
         end
-
       end
-
     end
   end
 end

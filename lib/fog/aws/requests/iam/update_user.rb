@@ -2,11 +2,10 @@ module Fog
   module AWS
     class IAM
       class Real
-
         require 'fog/aws/parsers/iam/update_user'
 
         # Update a user
-        # 
+        #
         # ==== Parameters
         # * user_name<~String> - Required. Name of the User to update. If you're changing the name of the User, this is the original User name.
         # * options<~Hash>:
@@ -32,7 +31,6 @@ module Fog
             :parser       => Fog::Parsers::AWS::IAM::UpdateUser.new
           }.merge!(options))
         end
-
       end
     end
   end

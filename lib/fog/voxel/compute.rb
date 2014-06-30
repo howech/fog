@@ -1,10 +1,8 @@
-require 'fog/voxel'
-require 'fog/compute'
+require 'fog/voxel/core'
 
 module Fog
   module Compute
     class Voxel < Fog::Service
-
       requires :voxel_api_key, :voxel_api_secret
       recognizes :host, :port, :scheme, :persistent
 
@@ -66,7 +64,6 @@ module Fog
         def reset_data
           self.class.data.delete(@voxel_api_key)
         end
-
       end
 
       class Real
@@ -87,7 +84,7 @@ module Fog
 
           @connection_options[:ssl_verify_peer] = false
 
-          @connection = Fog::Connection.new("#{@scheme}://#{@host}:#{@port}", @persistent, @connection_options)
+          @connection = Fog::XML::Connection.new("#{@scheme}://#{@host}:#{@port}", @persistent, @connection_options)
         end
 
         def request(method_name, options = {})

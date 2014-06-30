@@ -2,11 +2,10 @@ module Fog
   module AWS
     class IAM
       class Real
-
         require 'fog/aws/parsers/iam/basic'
 
         # Remove a policy from a user
-        # 
+        #
         # ==== Parameters
         # * user_name<~String>: name of the user
         # * policy_name<~String>: name of policy document
@@ -27,13 +26,11 @@ module Fog
             :parser           => Fog::Parsers::AWS::IAM::Basic.new
           )
         end
-
       end
 
       class Mock
-
         def delete_user_policy(user_name, policy_name)
-          if data[:users].has_key?(user_name) && data[:users][user_name][:policies].has_key?(policy_name)
+          if data[:users].key?(user_name) && data[:users][user_name][:policies].key?(policy_name)
             data[:users][user_name][:policies].delete policy_name
             Excon::Response.new.tap do |response|
               response.body = { 'RequestId' => Fog::AWS::Mock.request_id }
@@ -43,7 +40,6 @@ module Fog
             raise Fog::AWS::IAM::NotFound.new("The user policy with name #{policy_name} cannot be found.")
           end
         end
-
       end
     end
   end

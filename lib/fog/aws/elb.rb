@@ -1,4 +1,4 @@
-require 'fog/aws'
+require 'fog/aws/core'
 
 module Fog
   module AWS
@@ -56,7 +56,6 @@ module Fog
       collection :backend_server_descriptions
 
       class Mock
-
         require 'fog/aws/elb/policy_types'
 
         def self.data
@@ -92,7 +91,8 @@ module Fog
         end
 
         def setup_credentials(options)
-          @aws_access_key_id = options[:aws_access_key_id]
+          @aws_access_key_id     = options[:aws_access_key_id]
+          @aws_secret_access_key = options[:aws_secret_access_key]
         end
 
         def data
@@ -139,7 +139,7 @@ module Fog
           @persistent = options[:persistent]  || false
           @port       = options[:port]        || 443
           @scheme     = options[:scheme]      || 'https'
-          @connection = Fog::Connection.new("#{@scheme}://#{@host}:#{@port}#{@path}", @persistent, @connection_options)
+          @connection = Fog::XML::Connection.new("#{@scheme}://#{@host}:#{@port}#{@path}", @persistent, @connection_options)
         end
 
         def reload

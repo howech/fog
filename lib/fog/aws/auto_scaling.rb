@@ -1,4 +1,4 @@
-require 'fog/aws'
+require 'fog/aws/core'
 
 module Fog
   module AWS
@@ -104,7 +104,7 @@ module Fog
           @port       = options[:port]        || 443
           @persistent = options[:persistent]  || false
           @scheme     = options[:scheme]      || 'https'
-          @connection = Fog::Connection.new("#{@scheme}://#{@host}:#{@port}#{@path}", @persistent, @connection_options)
+          @connection = Fog::XML::Connection.new("#{@scheme}://#{@host}:#{@port}#{@path}", @persistent, @connection_options)
         end
 
         def reload
@@ -176,7 +176,6 @@ module Fog
           @hmac       = Fog::HMAC.new('sha256', @aws_secret_access_key)
         end
       end
-
 
       class Mock
         include Fog::AWS::CredentialFetcher::ConnectionMethods
@@ -274,9 +273,7 @@ module Fog
         def setup_credentials(options)
           @aws_access_key_id = options[:aws_access_key_id]
         end
-
       end
-
     end
   end
 end

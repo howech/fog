@@ -2,11 +2,10 @@ module Fog
   module AWS
     class IAM
       class Real
-
         require 'fog/aws/parsers/iam/list_policies'
 
         # List policies for a group
-        # 
+        #
         # ==== Parameters
         # * group_name<~String> - Name of group to list policies for
         # * options<~Hash>: Optional
@@ -32,7 +31,6 @@ module Fog
             :parser     => Fog::Parsers::AWS::IAM::ListPolicies.new
           }.merge!(options))
         end
-
       end
     end
   end

@@ -2,7 +2,6 @@ module Fog
   module Compute
     class AWS
       class Real
-
         require 'fog/aws/parsers/compute/basic'
         # Detaches a network interface.
         #
@@ -26,7 +25,7 @@ module Fog
           )
         end
       end
-      
+
       class Mock
         def detach_network_interface(attachment_id, force = false)
           response = Excon::Response.new

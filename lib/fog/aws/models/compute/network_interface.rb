@@ -3,9 +3,7 @@ require 'fog/core/model'
 module Fog
   module Compute
     class AWS
-
       class NetworkInterface < Fog::Model
-
         identity  :network_interface_id,        :aliases => 'networkInterfaceId'
         attribute :state
         attribute :request_id,                  :aliases => 'requestId'
@@ -26,7 +24,6 @@ module Fog
         attribute :attachment,                  :aliases => 'attachment'
         attribute :association,                 :aliases => 'association'
         attribute :tag_set,                     :aliases => 'tagSet'
-
 
         # Removes an existing network interface
         #
@@ -49,7 +46,7 @@ module Fog
         #  >> g = AWS.network_interfaces.new(:subnet_id => "subnet-someId", options)
         #  >> g.save
         #
-        # options is an optional hash which may contain 'PrivateIpAddress', 'Description', 'groupSet'
+        # options is an optional hash which may contain 'PrivateIpAddress', 'Description', 'GroupSet'
         #
         # == Returns:
         #
@@ -58,12 +55,17 @@ module Fog
 
         def save
           requires :subnet_id
-          data = service.create_network_interface(subnet_id).body['networkInterface']
+          options = {
+            'PrivateIpAddress'      => private_ip_address,
+            'Description'           => description,
+            'GroupSet'              => group_set,
+          }
+          options.delete_if {|key, value| value.nil?}
+          data = service.create_network_interface(subnet_id, options).body['networkInterface']
           new_attributes = data.reject {|key,value| key == 'requestId'}
           merge_attributes(new_attributes)
           true
         end
-
       end
     end
   end

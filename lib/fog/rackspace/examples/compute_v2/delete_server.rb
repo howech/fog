@@ -22,7 +22,7 @@ def select_server(servers)
   servers[delete_str.to_i]
 end
 
-# Use username defined in ~/.fog file, if absent prompt for username. 
+# Use username defined in ~/.fog file, if absent prompt for username.
 # For more details on ~/.fog refer to http://fog.io/about/getting_started.html
 def rackspace_username
   Fog.credentials[:rackspace_username] || get_user_input("Enter Rackspace Username")
@@ -53,4 +53,3 @@ server = select_server(servers)
 server.destroy
 
 puts "\nServer #{server.name} has been destroyed\n"
-

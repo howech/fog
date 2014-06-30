@@ -2,7 +2,6 @@ module Fog
   module CDN
     class AWS
       class Real
-
         require 'fog/aws/parsers/cdn/distribution'
 
         # Update a distribution in CloudFront.
@@ -51,7 +50,7 @@ module Fog
         #       * TrustedSigners [Array] - Trusted signers.
         #
         # @see http://docs.amazonwebservices.com/AmazonCloudFront/latest/APIReference/CreateDistribution.html
-        
+
         def put_distribution_config(distribution_id, etag, options = {})
           data = '<?xml version="1.0" encoding="UTF-8"?>'
           data << "<DistributionConfig xmlns=\"http://cloudfront.amazonaws.com/doc/#{@version}/\">"
@@ -85,11 +84,9 @@ module Fog
             :path       => "/distribution/#{distribution_id}/config"
           })
         end
-
       end
 
       class Mock
-
         def put_distribution_config(distribution_id, etag, options = {})
           distribution = self.data[:distributions][distribution_id]
 
@@ -114,7 +111,6 @@ module Fog
           end
         end
       end
-
     end
   end
 end

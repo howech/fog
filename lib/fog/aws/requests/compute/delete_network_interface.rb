@@ -2,7 +2,6 @@ module Fog
   module Compute
     class AWS
       class Real
-
         require 'fog/aws/parsers/compute/basic'
         # Deletes a network interface.
         #
@@ -24,7 +23,7 @@ module Fog
           )
         end
       end
-      
+
       class Mock
         def delete_network_interface(network_interface_id)
           response = Excon::Response.new

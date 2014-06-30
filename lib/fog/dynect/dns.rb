@@ -1,10 +1,8 @@
-require 'fog/dynect'
-require 'fog/dns'
+require 'fog/dynect/core'
 
 module Fog
   module DNS
     class Dynect < Fog::Service
-
       requires :dynect_customer, :dynect_username, :dynect_password
       recognizes :timeout, :persistent
       recognizes :provider # remove post deprecation
@@ -73,7 +71,7 @@ module Fog
           @persistent = options[:persistent]  || false
           @scheme     = options[:scheme]      || 'https'
           @version    = options[:version]     || '3.5.2'
-          @connection = Fog::Connection.new("#{@scheme}://#{@host}:#{@port}", @persistent, @connection_options)
+          @connection = Fog::XML::Connection.new("#{@scheme}://#{@host}:#{@port}", @persistent, @connection_options)
         end
 
         def auth_token
@@ -124,7 +122,12 @@ module Fog
           job_location = response.headers['Location']
 
           Fog.wait_for(time_to_wait) do
-            response = request(:expects => original_expects, :method => :get, :path => job_location)
+            response = request(
+              :expects => original_expects,
+              :idempotent => true,
+              :method => :get,
+              :path => job_location
+            )
             response.body['status'] != 'incomplete'
           end
 
@@ -135,7 +138,6 @@ module Fog
           response
         end
       end
-
     end
   end
 end

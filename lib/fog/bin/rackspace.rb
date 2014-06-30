@@ -1,12 +1,11 @@
 class Rackspace < Fog::Bin
   class << self
-
     def class_for(key)
       case key
       when :auto_scale
         Fog::Rackspace::AutoScale
       when :block_storage
-        Fog::Rackspace::BlockStorage 
+        Fog::Rackspace::BlockStorage
       when :cdn
         Fog::CDN::Rackspace
       when :compute
@@ -74,6 +73,5 @@ class Rackspace < Fog::Bin
     def services
       Fog::Rackspace.services
     end
-
   end
 end

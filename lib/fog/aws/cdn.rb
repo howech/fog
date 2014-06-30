@@ -1,5 +1,4 @@
-require 'fog/aws'
-require 'fog/cdn'
+require 'fog/aws/core'
 
 module Fog
   module CDN
@@ -31,7 +30,6 @@ module Fog
       request 'put_streaming_distribution_config'
 
       class Mock
-
         def self.data
           @data ||= Hash.new do |hash, key|
             hash[key] =  {
@@ -155,7 +153,7 @@ EOF
           @port       = options[:port]      || 443
           @scheme     = options[:scheme]    || 'https'
           @version    = options[:version]  || '2010-11-01'
-          @connection = Fog::Connection.new("#{@scheme}://#{@host}:#{@port}#{@path}", @persistent, @connection_options)
+          @connection = Fog::XML::Connection.new("#{@scheme}://#{@host}:#{@port}#{@path}", @persistent, @connection_options)
         end
 
         def reload

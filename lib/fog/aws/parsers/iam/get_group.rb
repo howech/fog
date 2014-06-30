@@ -2,7 +2,6 @@ module Fog
   module Parsers
     module AWS
       module IAM
-
         class GetGroup < Fog::Parsers::Base
         # http://docs.amazonwebservices.com/IAM/latest/APIReference/index.html?API_GetGroup.html
 
@@ -38,17 +37,15 @@ module Fog
             when 'UserId', 'UserName'
               @user[name] = value
             when 'member'
-              @response['Users'] << @user              
+              @response['Users'] << @user
               @user = {}
-            when 'IsTruncated'	
+            when 'IsTruncated'
               response[name] = (value == 'true')
-            when 'Marker', 'RequestId'              
+            when 'Marker', 'RequestId'
               @response[name] = value
             end
           end
-
         end
-
       end
     end
   end

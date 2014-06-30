@@ -4,7 +4,6 @@ module Fog
   module Rackspace
     class Queues
       class Claim < Fog::Model
-
         # @!attribute [r] identity
         # @return [String] The claim's id
         identity :identity
@@ -29,7 +28,7 @@ module Fog
         #   If limit is not specified, limit defaults to 10.
         attribute :messages
 
-        alias :id :identity
+        alias_method :id, :identity
 
         # Creates or updates a claim
         #
@@ -78,7 +77,7 @@ module Fog
               :client_id => service.client_id,
               :echo => true
             })
-          attributes[:messages] = messages.collect do |message|
+          attributes[:messages] = messages.map do |message|
             if message.instance_of? Fog::Rackspace::Queues::Message
               message.claim_id = self.id
               message
@@ -92,6 +91,14 @@ module Fog
               )
             end
           end
+        end
+
+        def initialize(new_attributes = {})
+          # A hack in support of the #messages= hack up above. #messages= requires #collection to
+          # be populated first to succeed, which is always the case in modern Rubies that preserve
+          # Hash ordering, but not in 1.8.7.
+          @collection = new_attributes.delete(:collection)
+          super(new_attributes)
         end
 
         private
@@ -109,7 +116,7 @@ module Fog
           response = service.create_claim(queue.identity, ttl, grace, options)
 
           if [200, 201].include? response.status
-            self.identity = response.headers['Location'].split('/').last
+            self.identity = response.get_header('Location').split('/').last
             self.messages = response.body
 
             #Since Claims aren't a server side collection, we need to

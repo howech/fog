@@ -4,15 +4,14 @@ module Fog
   module Rackspace
     class AutoScale
       class Webhook < Fog::Model
-
         # @!attribute [r] id
-        # @return [String] The webhook id   
+        # @return [String] The webhook id
         identity :id
 
         # @!attribute [r] group
         # @return [String] The associated group
         attribute :group
-        
+
         # @!attribute [r] policy
         # @return [String] The associated policy
         attribute :policy
@@ -31,7 +30,7 @@ module Fog
 
         # Create webhook
         # * requires attribute: :name
-        # 
+        #
         # @return [Boolean] returns true if webhook is being created
         #
         # @raise [Fog::Rackspace::AutoScale:::NotFound] - HTTP 404
@@ -40,7 +39,7 @@ module Fog
         # @raise [Fog::Rackspace::AutoScale:::ServiceError]
         #
         # @see Webhooks#create
-        # @see 
+        # @see
         def create
           requires :name
 
@@ -108,10 +107,9 @@ module Fog
         # @return [String] the URL
         def execution_url
           requires :links
-          link = links.find { |l| l['rel'] == 'capability' } 
+          link = links.find { |l| l['rel'] == 'capability' }
           link['href'] rescue nil
         end
-
       end
     end
   end

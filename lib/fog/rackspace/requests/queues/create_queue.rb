@@ -2,7 +2,6 @@ module Fog
   module Rackspace
     class Queues
       class Real
-
         # This operation creates a new queue.
         # The body of the request is empty.
         #
@@ -20,6 +19,19 @@ module Fog
             :method => 'PUT',
             :path => "queues/#{queue_name}"
           )
+        end
+      end
+
+      class Mock
+        def create_queue(queue_name)
+          raise MethodNotAllowed.new if queue_name.nil? || queue_name.empty?
+
+          existed = ! mock_queue(queue_name).nil?
+          add_queue(queue_name) unless existed
+
+          response = Excon::Response.new
+          response.status = existed ? 201 : 204
+          response
         end
       end
     end

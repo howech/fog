@@ -2,7 +2,6 @@ module Fog
   module Terremark
     module Shared
       module Real
-
         # Reserve requested resources and deploy vApp
         #
         # ==== Parameters
@@ -27,14 +26,14 @@ module Fog
         #       * 'name'<~String> - name of owner
         #       * 'type'<~String> - type of owner
         def add_internet_service(ip_id, name, protocol, port, options = {})
-          unless options.has_key?('Enabled')
+          unless options.key?('Enabled')
             options['Enabled'] = true
           end
           data = <<-DATA
           <CreateInternetServiceRequest xml:lang="en" xmlns="urn:tmrk:vCloudExpressExtensions-1.6" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <Name>#{name}</Name>
             <Protocol>#{protocol.upcase}</Protocol>
-            <Port>#{port}</Port> 
+            <Port>#{port}</Port>
             <Enabled>#{options['Enabled']}</Enabled>
             <Description>#{options['Description']}</Description>
             </CreateInternetServiceRequest>
@@ -49,7 +48,6 @@ module Fog
             :override_path => true
           )
         end
-
       end
     end
   end

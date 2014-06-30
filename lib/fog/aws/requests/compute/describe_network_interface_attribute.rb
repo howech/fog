@@ -2,7 +2,6 @@ module Fog
   module Compute
     class AWS
       class Real
-
         require 'fog/aws/parsers/compute/describe_network_interface_attribute'
         # Describes a network interface attribute value
         #
@@ -39,7 +38,7 @@ module Fog
           )
         end
       end
-      
+
       class Mock
         def describe_network_interface_attribute(network_interface_id, attribute)
           response = Excon::Response.new

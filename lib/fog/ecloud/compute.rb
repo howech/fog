@@ -1,3 +1,4 @@
+require 'fog/ecloud/core'
 require 'fog/ecloud/collection'
 require 'fog/ecloud/model'
 require 'builder'
@@ -13,7 +14,7 @@ module Fog
       #requires
       recognizes :ecloud_username, :ecloud_password, :ecloud_version,
                  :ecloud_access_key, :ecloud_private_key,
-                 :ecloud_authentication_method
+                 :ecloud_authentication_method, :base_path
 
       #### Models
       model_path 'fog/ecloud/models/compute'
@@ -246,12 +247,11 @@ module Fog
       request :virtual_machine_attach_disk
 
       module Shared
-
         attr_accessor :base_path
         attr_reader :versions_uri
 
         def validate_data(required_opts = [], options = {})
-          unless required_opts.all? { |opt| options.has_key?(opt) }
+          unless required_opts.all? { |opt| options.key?(opt) }
             raise ArgumentError.new("Required data missing: #{(required_opts - options.keys).map(&:inspect).join(", ")}")
           end
         end
@@ -282,7 +282,6 @@ module Fog
             end
           end
         end
-
 
         def initialize(options = {})
           require 'fog/core/parser'
@@ -316,7 +315,7 @@ module Fog
 
           # Hash connections on the host_url ... There's nothing to say we won't get URI's that go to
           # different hosts.
-          @connections[host_url] ||= Fog::Connection.new(host_url, @persistent, @connection_options)
+          @connections[host_url] ||= Fog::XML::Connection.new(host_url, @persistent, @connection_options)
 
           # Set headers to an empty hash if none are set.
           headers = set_extra_headers_for(params) || set_extra_headers_for({})
@@ -391,10 +390,9 @@ module Fog
           Base64.encode64(@hmac.sign(string)).chomp
         end
 
-
         # section 5.6.3.2 in the ~1000 page pdf spec
         def canonicalize_headers(headers)
-          tmp = headers.inject({}) {|ret, h| ret[h.first.downcase] = h.last if h.first.match(/^x-tmrk/i) ; ret }
+          tmp = headers.reduce({}) {|ret, h| ret[h.first.downcase] = h.last if h.first.match(/^x-tmrk/i) ; ret }
           tmp.reject! {|k,v| k == "x-tmrk-authorization" }
           tmp = tmp.sort.map{|e| "#{e.first}:#{e.last}" }.join("\n")
           tmp
@@ -409,7 +407,6 @@ module Fog
           "#{uri.downcase}\n#{tm_query_string}\n"
         end
       end
-
 
       class Mock
         include Shared
@@ -516,7 +513,6 @@ module Fog
                             }
                           }
 
-
                           public_ip = {
                             :id             => public_ip_id,
                             :href           => "/cloudapi/ecloud/publicips/#{public_ip_id}",
@@ -606,7 +602,6 @@ module Fog
 
                           network[:IpAddresses][:IpAddress].push(ip_address).push(ip_address2)
 
-
                           short_name = "solaris10_64guest"
                           operating_system = {
                             :short_name      => short_name,
@@ -682,7 +677,6 @@ module Fog
                               }
                             }
                           }
-
 
                           template = {
                             :id              => template_id,
@@ -766,7 +760,6 @@ module Fog
                             :environment_id => environment_id
                           }
 
-
                           {
                             :compute_pools             => {compute_pool_id            => compute_pool},
                             :environments              => {environment_id             => environment},
@@ -817,7 +810,7 @@ module Fog
           status  = params[:status] || 200
 
           response = Excon::Response.new(:body => body, :headers => headers, :status => status)
-          if params.has_key?(:expects) && ![*params[:expects]].include?(response.status)
+          if params.key?(:expects) && ![*params[:expects]].include?(response.status)
             raise(Excon::Errors.status_error(params, response))
           else response
           end

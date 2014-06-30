@@ -2,7 +2,6 @@ module Fog
   module AWS
     class RDS
       class Real
-
         require 'fog/aws/parsers/rds/describe_db_reserved_instances'
 
         # Describe all or specified load db instances
@@ -21,21 +20,18 @@ module Fog
           if opts[:max_records]
             params['MaxRecords'] = opts[:max_records]
           end
-          
+
           request({
             'Action'  => 'DescribeReservedDBInstances',
             :parser   => Fog::Parsers::AWS::RDS::DescribeDBReservedInstances.new
           }.merge(params))
         end
-
       end
 
       class Mock
-
         def describe_db_reserved_instances(identifier=nil, opts={})
           Fog::Mock.not_implemented
         end
-
       end
     end
   end

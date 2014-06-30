@@ -2,13 +2,12 @@ module Fog
   module AWS
     class CloudWatch
       class Real
-
         require 'fog/aws/parsers/cloud_watch/delete_alarms'
 
         # Delete a list of alarms
         # ==== Options
         # * AlarmNames<~Array>: A list of alarms to be deleted
-        # 
+        #
         # ==== Returns
         # * response<~Excon::Response>:
         #
@@ -29,7 +28,7 @@ module Fog
       class Mock
         def delete_alarms(alarm_names)
           [*alarm_names].each do |alarm_name|
-            unless data[:metric_alarms].has_key?(alarm_name)
+            unless data[:metric_alarms].key?(alarm_name)
               raise Fog::AWS::AutoScaling::NotFound, "The alarm '#{alarm_name}' does not exist."
             end
           end

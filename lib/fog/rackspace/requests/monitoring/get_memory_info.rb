@@ -2,7 +2,6 @@ module Fog
   module Rackspace
     class Monitoring
       class Real
-
         def get_memory_info(agent_id)
           request(
             :expects  => [200, 203],
@@ -14,7 +13,6 @@ module Fog
 
       class Mock
         def get_memory_info(agent_id)
-
           if agent_id == -1
             raise Fog::Rackspace::Monitoring::BadRequest
           end
@@ -32,7 +30,7 @@ module Fog
                 "ram"           => Fog::Mock.random_numbers(4).to_i,
                 "swap_total"      => Fog::Mock.random_numbers(10).to_i,
                 "swap_used"       => Fog::Mock.random_numbers(8).to_i,
-                "swap_free"       => Fog::Mock.random_numbers(10).to_i,                
+                "swap_free"       => Fog::Mock.random_numbers(10).to_i,
                 "swap_page_in"    => Fog::Mock.random_numbers(3).to_i,
                 "swap_page_out"   => Fog::Mock.random_numbers(3).to_i,
               }

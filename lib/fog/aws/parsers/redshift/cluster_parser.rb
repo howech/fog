@@ -2,7 +2,6 @@ module Fog
   module Parsers
     module Redshift
       module AWS
-
         class ClusterParser < Fog::Parsers::Base
           # :cluster_identifier - (String)
           # :node_type - (String)
@@ -53,7 +52,7 @@ module Fog
           end
 
           def fresh_cluster
-            { 'ClusterParameterGroups' => [], 'ClusterSecurityGroups' => [], 'VpcSecurityGroups' => [], 
+            { 'ClusterParameterGroups' => [], 'ClusterSecurityGroups' => [], 'VpcSecurityGroups' => [],
               'EndPoint' => {}, 'PendingModifiedValues'=> {}, 'RestoreStatus' => {}}
           end
 
@@ -73,9 +72,9 @@ module Fog
             end
           end
 
-          def end_element(name)            
+          def end_element(name)
             case name
-            when 'AvailabilityZone', 'ClusterIdentifier', 'ClusterStatus', 'ClusterSubnetGroupName', 'DBName', 
+            when 'AvailabilityZone', 'ClusterIdentifier', 'ClusterStatus', 'ClusterSubnetGroupName', 'DBName',
               'MasterUsername', 'ModifyStatus', 'PreferredMaintenanceWindow', 'VpcId'
               @cluster[name] = value
             when 'ClusterCreateTime'
@@ -83,7 +82,7 @@ module Fog
             when 'AllowVersionUpgrade', 'Encrypted', 'PubliclyAccessible'
               @cluster[name] = (value == "true")
             when 'Address'
-              @cluster['EndPoint'][name] = value            
+              @cluster['EndPoint'][name] = value
             when 'Port'
               @cluster['EndPoint'][name] = value.to_i
             when 'NodeType', 'ClusterVersion'

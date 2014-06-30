@@ -2,9 +2,7 @@ module Fog
   module Parsers
     module AWS
       module RDS
-
         class DescribeDBParameters < Fog::Parsers::Base
-
           def reset
             @response = { 'DescribeDBParametersResult' =>{}, 'ResponseMetadata' => {} }
             @parameter = {}
@@ -21,12 +19,12 @@ module Fog
             when 'DataType' then @parameter['DataType'] = value
             when 'AllowedValues' then @parameter['AllowedValues'] = value
             when 'Source' then @parameter['Source'] = value
-            when 'IsModifiable' then 
+            when 'IsModifiable' then
               @parameter['IsModifiable'] =  value == 'true' ? true : false
             when 'Description' then @parameter['Description'] = value
             when 'ApplyType' then @parameter['ApplyType'] = value
             when 'ParameterName' then @parameter['ParameterName'] = value
-            when 'Parameter' 
+            when 'Parameter'
               @parameters << @parameter
               @parameter = {}
             when 'Marker'

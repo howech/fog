@@ -2,11 +2,10 @@ module Fog
   module AWS
     class IAM
       class Real
-
         require 'fog/aws/parsers/iam/basic'
 
         # Remove a policy from a group
-        # 
+        #
         # ==== Parameters
         # * group_name<~String>: name of the group
         # * policy_name<~String>: name of policy document
@@ -27,7 +26,6 @@ module Fog
             :parser           => Fog::Parsers::AWS::IAM::Basic.new
           )
         end
-
       end
     end
   end

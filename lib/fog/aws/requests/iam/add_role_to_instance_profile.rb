@@ -2,11 +2,10 @@ module Fog
   module AWS
     class IAM
       class Real
-
         require 'fog/aws/parsers/iam/basic'
 
         # Add a role to an instance profile
-        # 
+        #
         # ==== Parameters
         # * instance_profile_name<~String>: Name of the instance profile to update.
         # * role_name<~String>:Name of the role to add.
@@ -27,9 +26,7 @@ module Fog
             :parser     => Fog::Parsers::AWS::IAM::Basic.new
           )
         end
-
       end
-
     end
   end
 end

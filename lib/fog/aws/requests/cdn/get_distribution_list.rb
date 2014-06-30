@@ -2,7 +2,6 @@ module Fog
   module CDN
     class AWS
       class Real
-
         require 'fog/aws/parsers/cdn/get_distribution_list'
 
         # List information about distributions in CloudFront.
@@ -37,7 +36,7 @@ module Fog
         #       * TrustedSigners [Array] - Trusted signers.
         #
         # @see http://docs.amazonwebservices.com/AmazonCloudFront/latest/APIReference/ListDistributions.html
-        # 
+        #
         def get_distribution_list(options = {})
           request({
             :expects    => 200,
@@ -48,11 +47,9 @@ module Fog
             :query      => options
           })
         end
-
       end
 
       class Mock
-
         def get_distribution_list(options = {})
           response = Excon::Response.new
           response.status = 200

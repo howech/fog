@@ -1,10 +1,8 @@
-require 'fog/hp'
-require 'fog/storage'
+require 'fog/hp/core'
 
 module Fog
   module Storage
     class HP < Fog::Service
-
       requires    :hp_secret_key, :hp_tenant_id, :hp_avl_zone
       recognizes  :hp_auth_uri, :hp_cdn_ssl, :hp_cdn_uri, :credentials, :hp_service_type
       recognizes  :persistent, :connection_options
@@ -48,7 +46,6 @@ module Fog
       request :put_shared_object
 
       module Utils
-
         def cdn
           unless @hp_cdn_uri.nil?
             @cdn ||= Fog::CDN.new(
@@ -149,7 +146,7 @@ module Fog
           write_h = write_header.split(',') unless write_header.nil?
           return read_h, write_h
         end
-        
+
         # Get an expiring object https url
         #
         # ==== Parameters
@@ -163,7 +160,7 @@ module Fog
         def get_object_https_url(container, object, expires, options = {})
           create_temp_url(container, object, expires, "GET", options.merge(:scheme => "https"))
         end
-        
+
         # Get an expiring object http url
         #
         # ==== Parameters
@@ -192,8 +189,8 @@ module Fog
           expiration_time = (Time.now + expires_secs.to_i).to_i
           create_temp_url(container, object, expiration_time, method, {})
         end
-        
-        # creates a temporary url 
+
+        # creates a temporary url
         #
         # ==== Parameters
         # * container<~String> - Name of container containing object
@@ -208,7 +205,6 @@ module Fog
         #   * body<~String> - url for object
         def create_temp_url(container, object, expires, method, options = {})
           raise ArgumentError, "Insufficient parameters specified." unless (container && object && expires && method)
-          raise ArgumentError, "Storage must my instantiated with the :os_account_meta_temp_url_key option" if @os_account_meta_temp_url_key.nil?
 
           # POST not allowed
           allowed_methods = %w{GET PUT HEAD}
@@ -218,7 +214,7 @@ module Fog
 
           expires        = expires.to_i
           scheme = options[:scheme] || @scheme
-          
+
           # do not encode before signature generation, encode after
           sig_path = "#{@path}/#{container}/#{object}"
           encoded_path = "#{@path}/#{Fog::HP.escape(container)}/#{Fog::HP.escape(object)}"
@@ -234,19 +230,24 @@ module Fog
             hmac      = OpenSSL::HMAC.new(@os_account_meta_temp_url_key, OpenSSL::Digest::SHA1.new)
             signature= hmac.update(string_to_sign).hexdigest
           else
+            #Note if the value of the @hp_secret_key is really a password, this will NOT work
+            #HP Public Cloud FormPost and Temporary URL hashing algorithms require the secret key NOT password.
+            if Fog::HP.instance_variable_get("@hp_use_upass_auth_style")
+              raise ArgumentError, "Temporary URLS cannot be generated unless you login via access_key/secret_key"
+            end
             # Only works with 1.9+ Not compatible with 1.8.7
             #signed_string = Digest::HMAC.hexdigest(string_to_sign, @hp_secret_key, Digest::SHA1)
-          
-            # Compatible with 1.8.7 onwards          
+
+            # Compatible with 1.8.7 onwards
             hmac = OpenSSL::HMAC.new(@hp_secret_key, OpenSSL::Digest::SHA1.new)
             signed_string = hmac.update(string_to_sign).hexdigest
-            
+
             signature     = @hp_tenant_id.to_s + ":" + @hp_access_key.to_s + ":" + signed_string
             signature     = Fog::HP.escape(signature)
           end
-          
+
           # generate the temp url using the signature and expiry
-          "#{scheme}://#{@host}#{encoded_path}?temp_url_sig=#{signature}&temp_url_expires=#{expires}"          
+          "#{scheme}://#{@host}#{encoded_path}?temp_url_sig=#{signature}&temp_url_expires=#{expires}"
         end
       end
 
@@ -284,7 +285,7 @@ module Fog
           end
           @hp_secret_key = options[:hp_secret_key]
           @hp_tenant_id = options[:hp_tenant_id]
-          @os_account_meta_temp_url_key = options[:os_account_meta_temp_url_key]        
+          @os_account_meta_temp_url_key = options[:os_account_meta_temp_url_key]
         end
 
         def data
@@ -294,7 +295,6 @@ module Fog
         def reset_data
           self.class.data.delete(@hp_access_key)
         end
-
       end
 
       class Real
@@ -312,6 +312,10 @@ module Fog
           unless @hp_access_key
             raise ArgumentError.new("Missing required arguments: hp_access_key. :hp_account_id is deprecated, please use :hp_access_key instead.")
           end
+          if options[:os_account_meta_temp_url_key]
+            Fog::Logger.deprecation(":os_account_meta_temp_url_key is deprecated, and will be removed in a future release. please use the :openstack provider instead.")
+            @os_account_meta_temp_url_key = options.delete(:os_account_meta_temp_url_key)
+          end
           @hp_secret_key = options[:hp_secret_key]
           @hp_auth_uri   = options[:hp_auth_uri]
           @hp_cdn_ssl    = options[:hp_cdn_ssl]
@@ -320,12 +324,11 @@ module Fog
           ### A symbol is required, we should ensure that the value is loaded as a symbol
           auth_version = options[:hp_auth_version] || :v2
           auth_version = auth_version.to_s.downcase.to_sym
-          
+
           ### Pass the service name for object storage to the authentication call
           options[:hp_service_type] ||= "Object Storage"
           @hp_tenant_id = options[:hp_tenant_id]
           @hp_avl_zone  = options[:hp_avl_zone]
-          @os_account_meta_temp_url_key = options[:os_account_meta_temp_url_key]
 
           ### Make the authentication call
           if (auth_version == :v2)
@@ -352,7 +355,7 @@ module Fog
           @port   = uri.port
           @scheme = uri.scheme
 
-          @connection = Fog::Connection.new("#{@scheme}://#{@host}:#{@port}", @persistent, @connection_options)
+          @connection = Fog::XML::Connection.new("#{@scheme}://#{@host}:#{@port}", @persistent, @connection_options)
         end
 
         def reload
@@ -409,7 +412,6 @@ module Fog
           end
           response
         end
-
       end
     end
   end

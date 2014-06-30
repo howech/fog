@@ -2,7 +2,6 @@ module Fog
   module Rackspace
     class Queues
       class Real
-
         # This operation immediately deletes a queue and all of its existing messages.
         #
         # @param [String] queue_name Specifies the name of the queue.
@@ -18,6 +17,15 @@ module Fog
             :method => 'DELETE',
             :path => "queues/#{queue_name}"
           )
+        end
+      end
+
+      class Mock
+        def delete_queue(queue_name)
+          data.delete(queue_name)
+          response = Excon::Response.new
+          response.status = 204
+          response
         end
       end
     end

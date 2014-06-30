@@ -2,11 +2,10 @@ module Fog
   module CDN
     class AWS
       class Real
-
         require 'fog/aws/parsers/cdn/get_invalidation_list'
 
         # Get invalidation list.
-        # 
+        #
         # @param options [Hash] Config arguments for list.
         # @option options Marker [String] Limits object keys to only those that appear lexicographically after its value.
         # @option options MaxItems [Integer] Limits number of object keys returned.
@@ -22,7 +21,7 @@ module Fog
         #       * Status [String]
         #
         # @see http://docs.amazonwebservices.com/AmazonCloudFront/latest/APIReference/ListInvalidation.html
-        
+
         def get_invalidation_list(distribution_id, options = {})
           request({
             :expects    => 200,
@@ -33,11 +32,9 @@ module Fog
             :query      => options
           })
         end
-
       end
 
       class Mock
-
         def get_invalidation_list(distribution_id, options = {})
           distribution = self.data[:distributions][distribution_id]
           unless distribution
@@ -73,9 +70,7 @@ module Fog
             'Status' => d['Status']
           }
         end
-
       end
-
     end
   end
 end

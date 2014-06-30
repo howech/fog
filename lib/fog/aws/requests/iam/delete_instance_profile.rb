@@ -2,11 +2,10 @@ module Fog
   module AWS
     class IAM
       class Real
-
         require 'fog/aws/parsers/iam/basic'
 
         # Delete a instance_profile
-        # 
+        #
         # ==== Parameters
         # * instance_profile_name<~String>: name of the instance_profile to delete
         #
@@ -25,7 +24,6 @@ module Fog
             :parser     => Fog::Parsers::AWS::IAM::Basic.new
           )
         end
-
       end
     end
   end

@@ -1,11 +1,9 @@
-require 'fog/cloudstack'
-require 'fog/compute'
+require 'fog/cloudstack/core'
 require 'digest/md5'
 
 module Fog
   module Compute
     class Cloudstack < Fog::Service
-
       class BadRequest < Fog::Compute::Cloudstack::Error; end
       class Unauthorized < Fog::Compute::Cloudstack::Error; end
 
@@ -15,7 +13,6 @@ module Fog
                  :cloudstack_port, :cloudstack_path, :cloudstack_scheme, :cloudstack_persistent
 
       request_path 'fog/cloudstack/requests/compute'
-
 
       model_path 'fog/cloudstack/models/compute'
       model :address
@@ -131,7 +128,7 @@ module Fog
       request :reset_password_for_virtual_machine
       request :revoke_security_group_ingress
       request :revoke_security_group_egress
-      request :start_virtual_machine      
+      request :start_virtual_machine
       request :stop_virtual_machine
       request :update_account
       request :update_domain
@@ -140,7 +137,6 @@ module Fog
       request :update_virtual_machine
 
       class Real
-
         def initialize(options={})
           @cloudstack_api_key           = options[:cloudstack_api_key]
           @cloudstack_secret_access_key = options[:cloudstack_secret_access_key]
@@ -150,7 +146,7 @@ module Fog
           @path                         = options[:cloudstack_path]    || '/client/api'
           @port                         = options[:cloudstack_port]    || 443
           @scheme                       = options[:cloudstack_scheme]  || 'https'
-          @connection = Fog::Connection.new("#{@scheme}://#{@host}:#{@port}#{@path}", options[:cloudstack_persistent], {:ssl_verify_peer => false})
+          @connection = Fog::XML::Connection.new("#{@scheme}://#{@host}:#{@port}#{@path}", options[:cloudstack_persistent], {:ssl_verify_peer => false})
         end
 
         def reload
@@ -198,7 +194,7 @@ module Fog
           response
         end
 
-      private
+        private
         def has_session?
           @cloudstack_session_id && @cloudstack_session_key
         end
@@ -234,7 +230,7 @@ module Fog
               :query => params,
               :headers => headers,
               :method => method,
-              :expects => expects  
+              :expects => expects
             })
 
           rescue Excon::Errors::HTTPStatusError => error
@@ -252,7 +248,6 @@ module Fog
               raise Fog::Compute::Cloudstack::Error, error_text
             end
           end
-
         end
       end # Real
 

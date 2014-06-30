@@ -3,7 +3,6 @@ require 'fog/compute/models/server'
 module Fog
   module Compute
     class Vsphere
-
       class Server < Fog::Compute::Server
         extend Fog::Deprecation
         deprecate(:ipaddress, :public_ip_address)
@@ -46,6 +45,7 @@ module Fog
         attribute :resource_pool
         attribute :instance_uuid # move this --> id
         attribute :guest_id
+        attribute :hardware_version
         attribute :scsi_controller # this is the first scsi controller. Right now no more of them can be used.
 
         def initialize(attributes={} )
@@ -65,7 +65,6 @@ module Fog
           end
         end
         # End Lazy Loaded Attributes
-
 
         def vm_reconfig_memory(options = {})
           requires :instance_uuid, :memory
@@ -126,7 +125,7 @@ module Fog
           requires :name, :datacenter, :relative_path
 
           # Convert symbols to strings
-          req_options = options.inject({}) { |hsh, (k,v)| hsh[k.to_s] = v; hsh }
+          req_options = options.reduce({}) { |hsh, (k,v)| hsh[k.to_s] = v; hsh }
 
           # Give our path to the request
           req_options['template_path'] ="#{relative_path}/#{name}"
@@ -178,7 +177,7 @@ module Fog
         def sockets
           cpus / corespersocket
         end
-        
+
         def mac
           interfaces.first.mac unless interfaces.empty?
         end
@@ -186,7 +185,7 @@ module Fog
         def interfaces
           attributes[:interfaces] ||= id.nil? ? [] : service.interfaces( :server => self )
         end
-        
+
         def interface_ready? attrs
           (attrs.is_a? Hash and attrs[:blocking]) or attrs.is_a? Fog::Compute::Vsphere::Interface
         end
@@ -271,7 +270,7 @@ module Fog
             self.attributes[:volumes].map! { |vol| vol.is_a?(Hash) ? service.volumes.new(vol) : vol }
           end
         end
-        
+
         def initialize_customvalues
           if attributes[:customvalues] and attributes[:customvalues].is_a?(Array)
             self.attributes[:customvalues].map { |cfield| cfield.is_a?(Hash) ? service.customvalue.new(cfield) : cfield}
@@ -283,9 +282,7 @@ module Fog
             Fog::Compute::Vsphere::SCSIController.new(self.attributes[:scsi_controller])
           end
         end
-
       end
-
     end
   end
 end

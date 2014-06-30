@@ -1,13 +1,11 @@
 module Fog
   module AWS
     class DataPipeline
-
       class Real
-
         # List all pipelines
         # http://docs.aws.amazon.com/datapipeline/latest/APIReference/API_ListPipelines.html
         # ==== Parameters
-        # * Marker <~String> - The starting point for the results to be returned. 
+        # * Marker <~String> - The starting point for the results to be returned.
         # ==== Returns
         # * response<~Excon::Response>:
         #   * body<~Hash>:
@@ -22,7 +20,6 @@ module Fog
 
           Fog::JSON.decode(response.body)
         end
-
       end
 
       class Mock
@@ -30,7 +27,6 @@ module Fog
           Fog::Mock.not_implemented
         end
       end
-
     end
   end
 end

@@ -2,18 +2,16 @@ module Fog
   module Parsers
     module AWS
       module RDS
-
         require 'fog/aws/parsers/rds/db_parser'
-        
-        class ModifyDBInstance < Fog::Parsers::AWS::RDS::DbParser
 
+        class ModifyDBInstance < Fog::Parsers::AWS::RDS::DbParser
           def reset
             @response = { 'ModifyDBInstanceResult' => {}, 'ResponseMetadata' => {} }
             super
           end
 
           def start_element(name, attrs = [])
-            super            
+            super
           end
 
           def end_element(name)

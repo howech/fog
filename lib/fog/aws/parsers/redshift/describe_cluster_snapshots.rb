@@ -2,7 +2,6 @@ module Fog
   module Parsers
     module Redshift
       module AWS
-
         require 'fog/aws/parsers/redshift/cluster_snapshot_parser'
 
         class DescribeClusterSnapshots < ClusterSnapshotParser
@@ -21,8 +20,8 @@ module Fog
             end
           end
 
-          def end_element(name)   
-            super         
+          def end_element(name)
+            super
             case name
             when 'Marker'
               @response[name] = value

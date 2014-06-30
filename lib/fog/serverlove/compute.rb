@@ -1,7 +1,8 @@
+require 'fog/serverlove/core'
+
 module Fog
   module Compute
     class Serverlove < Fog::Service
-
       API_HOST = "api.z1-man.serverlove.com"
 
       requires :serverlove_uuid, :serverlove_api_key
@@ -38,26 +39,23 @@ module Fog
       collection  :servers
 
       class Mock
-
         def initialize(options)
-          @serverlove_uuid = options[:serverlove_uuid] || Fog.credentials[:serverlove_uuid]
-          @serverlove_api_key = options[:serverlove_api_key] || Fog.credentials[:serverlove_api_key]
+          @serverlove_uuid = options[:serverlove_uuid]
+          @serverlove_api_key = options[:serverlove_api_key]
         end
 
         def request(options)
           raise "Not implemented"
         end
-
       end
 
       class Real
-
         def initialize(options)
           @api_uuid = options[:serverlove_uuid] || Fog.credentials[:serverlove_uuid]
           @api_key = options[:serverlove_api_key] || Fog.credentials[:serverlove_api_key]
           @api_host = options[:serverlove_api_url] || Fog.credentials[:serverlove_api_url] || API_HOST
 
-          @connection = Fog::Connection.new("https://#{@api_uuid}:#{@api_key}@#{@api_host}")
+          @connection = Fog::XML::Connection.new("https://#{@api_uuid}:#{@api_key}@#{@api_host}")
         end
 
         def request(params)
@@ -80,7 +78,7 @@ module Fog
         end
 
         def encode_pairs(params)
-          params.keys.collect do |key|
+          params.keys.map do |key|
             "#{key} #{params[key]}"
           end.join("\n")
         end
@@ -92,9 +90,7 @@ module Fog
             raise 'omg'
           end
         end
-
       end
-
     end
   end
 end

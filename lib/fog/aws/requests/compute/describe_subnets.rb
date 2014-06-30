@@ -2,7 +2,6 @@ module Fog
   module Compute
     class AWS
       class Real
-
         require 'fog/aws/parsers/compute/describe_subnets'
 
         # Describe all or specified subnets
@@ -19,7 +18,7 @@ module Fog
         # * 'state'<~String> - The current state of the Subnet. ['pending', 'available']
         # * 'vpcId'<~String> - The ID of the VPC the subnet is in
         # * 'cidrBlock'<~String> - The CIDR block the Subnet covers.
-        # * 'availableIpAddressCount'<~Integer> - The number of unused IP addresses in the subnet (the IP addresses for any 
+        # * 'availableIpAddressCount'<~Integer> - The number of unused IP addresses in the subnet (the IP addresses for any
         #   stopped instances are considered unavailable)
         # * 'availabilityZone'<~String> - The Availability Zone the subnet is in.
         # * 'tagSet'<~Array>: Tags assigned to the resource.

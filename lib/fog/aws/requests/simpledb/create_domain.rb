@@ -2,13 +2,12 @@ module Fog
   module AWS
     class SimpleDB
       class Real
-
         # Create a SimpleDB domain
         #
         # ==== Parameters
         # * domain_name<~String>:: Name of domain. Must be between 3 and 255 of the
         # following characters: a-z, A-Z, 0-9, '_', '-' and '.'.
-        # 
+        #
         # ==== Returns
         # * response<~Excon::Response>:
         #   * body<~Hash>:
@@ -22,11 +21,9 @@ module Fog
             :parser       => Fog::Parsers::AWS::SimpleDB::Basic.new(@nil_string)
           )
         end
-
       end
 
       class Mock
-
         def create_domain(domain_name)
           response = Excon::Response.new
           self.data[:domains][domain_name] = {}
@@ -37,7 +34,6 @@ module Fog
           }
           response
         end
-
       end
     end
   end

@@ -2,7 +2,6 @@ module Fog
   module Compute
     class Vsphere
       class Real
-
         def list_datacenters filters = {}
           raw_datacenters.map do |dc|
             {
@@ -16,11 +15,11 @@ module Fog
 
         protected
 
-        def raw_getpathmo mo 
+        def raw_getpathmo mo
           if mo.parent == nil or mo.parent.name == @connection.rootFolder.name then
             [ mo.name ]
           else
-            [ raw_getpathmo(mo.parent), mo.name ].flatten 
+            [ raw_getpathmo(mo.parent), mo.name ].flatten
           end
         end
 
@@ -29,13 +28,13 @@ module Fog
           @raw_datacenters ||= get_raw_datacenters_from_folder folder
         end
 
-        def get_raw_datacenters_from_folder folder=nil 
+        def get_raw_datacenters_from_folder folder=nil
           folder.childEntity.map do | childE |
             if childE.is_a? RbVmomi::VIM::Datacenter
                childE
             elsif childE.is_a? RbVmomi::VIM::Folder
                get_raw_datacenters_from_folder childE
-            end 
+            end
           end.flatten
         end
 

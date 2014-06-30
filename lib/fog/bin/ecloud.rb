@@ -1,6 +1,5 @@
 class Ecloud < Fog::Bin
   class << self
-
     def available?
       Fog::Ecloud::ECLOUD_OPTIONS.all? {|requirement| Fog.credentials.include?(requirement)}
     end
@@ -9,7 +8,7 @@ class Ecloud < Fog::Bin
       case key
       when :compute
         Fog::Compute::Ecloud
-      else 
+      else
         raise ArgumentError, "Unrecognized service: #{key}"
       end
     end
@@ -30,6 +29,5 @@ class Ecloud < Fog::Bin
     def services
       Fog::Ecloud.services
     end
-
   end
 end

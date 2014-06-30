@@ -5,7 +5,6 @@ module Fog
         require 'fog/aws/parsers/elasticache/base'
 
         class CacheClusterParser < Base
-
           def reset
             super
             reset_cache_cluster
@@ -26,7 +25,6 @@ module Fog
             when 'CacheNode'; then @cache_node = {}
             when 'PendingModifiedValues'; then @pending_values = {}
             end
-
           end
 
           def end_element(name)
@@ -51,8 +49,8 @@ module Fog
               @cache_cluster[name] = DateTime.parse(value)
             when 'CacheSecurityGroup'
               @cache_cluster["#{name}s"] << @security_group unless @security_group.empty?
-            when 'CacheSecurityGroupName', 'Status'
-              @security_group[name] = value
+            when 'CacheSecurityGroupName', 'Status', 'CacheSubnetGroupName'
+              @cache_cluster[name] = value
             when 'CacheNode'
               @cache_cluster["#{name}s"] << @cache_node unless @cache_node.empty?
               @cache_node = nil

@@ -2,9 +2,7 @@ module Fog
   module Rackspace
     class AutoScale
       class Real
-
         def update_launch_config(group_id, options)
-          
           body = options
 
           request(
@@ -24,7 +22,7 @@ module Fog
           end
 
           config = group['launchConfiguration']
-          
+
           config['args'] = options['args'] if options['args']
           config['type'] = options['type'] if options['type']
 

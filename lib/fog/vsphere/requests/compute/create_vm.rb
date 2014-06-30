@@ -8,6 +8,7 @@ module Fog
           vm_cfg        = {
             :name         => attributes[:name],
             :guestId      => attributes[:guest_id],
+            :version      => attributes[:hardware_version],
             :files        => { :vmPathName => vm_path_name(attributes) },
             :numCPUs      => attributes[:cpus],
             :numCoresPerSocket => attributes[:corespersocket],
@@ -83,13 +84,13 @@ module Fog
         def create_controller options=nil
           options=if options
                     controller_default_options.merge(Hash[options.map{|k,v| [k.to_sym,v] }])
-                  else 
-                    controller_default_options 
+                  else
+                    controller_default_options
                   end
-          controller_class=if options[:type].is_a? String then 
-                             Fog::class_from_string options[:type], "RbVmomi::VIM"
-                           else 
-                             options[:type] 
+          controller_class=if options[:type].is_a? String then
+                             Fog::Vsphere.class_from_string options[:type], "RbVmomi::VIM"
+                           else
+                             options[:type]
                            end
           {
             :operation => options[:operation],
@@ -106,7 +107,7 @@ module Fog
         end
 
         def controller_get_shared_from_options options
-          if (options.has_key? :shared and options[:shared]==false) or not options.has_key? :shared then
+          if (options.key? :shared and options[:shared]==false) or not options.key? :shared then
             :noSharing
           elsif options[:shared]==true then
             :virtualSharing
@@ -134,7 +135,7 @@ module Fog
             )
           }
 
-          if operation == :add && disk.thin == false && disk.eager_zero
+          if operation == :add && disk.thin == 'false' && disk.eager_zero == 'true'
             payload[:device][:backing][:eagerlyScrub] = disk.eager_zero
           end
 
@@ -149,13 +150,11 @@ module Fog
             }
           ]
         end
-
       end
 
       class Mock
         def create_vm attributes = { }
         end
-
       end
     end
   end

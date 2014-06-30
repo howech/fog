@@ -1,4 +1,4 @@
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'rackspace'))
+require 'fog/rackspace/core'
 
 module Fog
   module Rackspace
@@ -86,9 +86,7 @@ module Fog
           end
         end
 
-
         class Real < Fog::Rackspace::Service
-
           def initialize(options = {})
             @options = options
             @options[:connection_options] ||= {}
@@ -96,7 +94,7 @@ module Fog
 
             authenticate
 
-            @connection = Fog::Connection.new(endpoint_uri.to_s, @options[:persistent], @options[:connection_options])
+            @connection = Fog::Core::Connection.new(endpoint_uri.to_s, @options[:persistent], @options[:connection_options])
           end
 
           def request(params, parse_json = true, &block)

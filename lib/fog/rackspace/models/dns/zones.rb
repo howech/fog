@@ -5,13 +5,12 @@ module Fog
   module DNS
     class Rackspace
       class Zones < Fog::Collection
-
         attribute :total_entries, :aliases => "totalEntries"
 
         model Fog::DNS::Rackspace::Zone
 
         # List all domains. Return by default a maximum of 100 items
-        # @param [Hash] options Options to pass to the underlying API call 
+        # @param [Hash] options Options to pass to the underlying API call
         # @option options [String] :name search for domains containing the given substring
         # @option options [Integer] :limit number of records to return
         # @option options [Integer] :offset starting offset of records to return
@@ -22,8 +21,8 @@ module Fog
 
           load(body['domains'])
         end
-        
-        alias :each_zone_this_page :each
+
+        alias_method :each_zone_this_page, :each
         def each
           return self unless block_given?
 
@@ -69,7 +68,6 @@ module Fog
           CGI.parse uri.query
         end
       end
-
     end
   end
 end

@@ -1,11 +1,10 @@
 module Fog
   module Parsers
     module AWS
-      module RDS 
+      module RDS
         require 'fog/aws/parsers/rds/base'
 
         class EventListParser < Base
-
           def reset
             super
             @response['Events'] = []
@@ -16,7 +15,6 @@ module Fog
             case name
             when 'Event'; then @event = {}
             end
-
           end
 
           def end_element(name)

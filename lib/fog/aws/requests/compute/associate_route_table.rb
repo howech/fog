@@ -2,7 +2,6 @@ module Fog
   module Compute
     class AWS
       class Real
-
         require 'fog/aws/parsers/compute/associate_route_table'
         # Associates a subnet with a route table.
         #
@@ -25,11 +24,9 @@ module Fog
             :parser        => Fog::Parsers::Compute::AWS::AssociateRouteTable.new
           )
         end
-
       end
 
       class Mock
-
         def associate_route_table(routeTableId, subnetId)
           routetable = self.data[:route_tables].find { |routetable| routetable["routeTableId"].eql? routeTableId }
           subnet = self.data[:subnets].find { |subnet| subnet["subnetId"].eql? subnetId }
@@ -49,14 +46,13 @@ module Fog
           else
             raise Fog::Compute::AWS::NotFound.new("The subnet ID '#{subnetId}' does not exist")
           end
-
         end
 
         private
 
         def add_route_association(routeTableId, subnetId, main=nil)
           response = {
-              "routeTableAssociationId" => "rtbassoc-#{Fog::Mock.random_hex(8)}", 
+              "routeTableAssociationId" => "rtbassoc-#{Fog::Mock.random_hex(8)}",
               "routeTableId" => routeTableId,
               "subnetId" => nil,
               "main" => false
@@ -66,9 +62,8 @@ module Fog
           else
             response['subnetId'] = subnetId
           end
-          response   
+          response
         end
-        
       end
     end
   end

@@ -2,7 +2,6 @@ module Fog
   module AWS
     class IAM
       class Real
-
         require 'fog/aws/parsers/iam/list_instance_profiles'
 
         # Lists the instance profiles that have the specified associated role
@@ -26,14 +25,14 @@ module Fog
         #         * Roles<~Array> -
         #           role<~Hash>:
         #             * 'Arn'<~String> -
-        #             * 'AssumeRolePolicyDocument'<~String<  
+        #             * 'AssumeRolePolicyDocument'<~String<
         #             * 'Path'<~String> -
         #             *  'RoleId'<~String> -
         #             * 'RoleName'<~String> -
         #     * 'IsTruncated<~Boolean> - Whether or not results were truncated
         #     * 'Marker'<~String> - appears when IsTruncated is true as the next marker to use
         #     * 'RequestId'<~String> - Id of the request
-        #     
+        #
         # ==== See Also
         # http://docs.amazonwebservices.com/IAM/latest/APIReference/API_ListInstanceProfilesForRole.html
         #
@@ -44,7 +43,6 @@ module Fog
             :parser     => Fog::Parsers::AWS::IAM::ListInstanceProfiles.new
           }.merge!(options))
         end
-
       end
     end
   end

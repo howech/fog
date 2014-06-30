@@ -2,14 +2,13 @@ module Fog
   module CDN
     class AWS
       class Real
-
         # Delete a streaming distribution from CloudFront.
         #
         # @param [String] distribution_id Id of distribution to delete.
         # @param [String] etag Etag of that distribution from earlier get or put
         #
         # @see http://docs.amazonwebservices.com/AmazonCloudFront/latest/APIReference/DeleteStreamingDistribution.html
-        
+
         def delete_streaming_distribution(distribution_id, etag)
           request({
             :expects    => 204,
@@ -19,11 +18,9 @@ module Fog
             :path       => "/streaming-distribution/#{distribution_id}"
           })
         end
-
       end
 
       class Mock
-
         def delete_streaming_distribution(distribution_id, etag)
           distribution = self.data[:streaming_distributions][distribution_id]
 
@@ -48,9 +45,7 @@ module Fog
             Fog::CDN::AWS::Mock.error(:no_such_streaming_distribution)
           end
         end
-
       end
-
     end
   end
 end

@@ -1,10 +1,8 @@
-require 'fog/xenserver'
-require 'fog/compute'
+require 'fog/xenserver/core'
 
 module Fog
   module Compute
     class XenServer < Fog::Service
-
       require 'fog/xenserver/utilities'
       require 'fog/xenserver/parser'
 
@@ -115,7 +113,6 @@ module Fog
       request :snapshot_revert
 
       class Real
-
         def initialize(options={})
           @host        = options[:xenserver_url]
           @username    = options[:xenserver_username]
@@ -144,11 +141,9 @@ module Fog
         def default_network
           networks.find { |n| n.name == (@defaults[:network] || "Pool-wide network associated with eth0") }
         end
-
       end
 
       class Mock
-
         def self.data
           @data ||= Hash.new do |hash, key|
             hash[key] = {}
@@ -165,13 +160,10 @@ module Fog
           @host        = options[:xenserver_pool_master]
           @username    = options[:xenserver_username]
           @password    = options[:xenserver_password]
-          @connection  = Fog::Connection.new(@host)
+          @connection  = Fog::XML::Connection.new(@host)
           @connection.authenticate(@username, @password)
         end
-
       end
     end
   end
 end
-
-

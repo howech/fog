@@ -5,7 +5,6 @@ module Fog
   module Rackspace
     class Queues
       class Queues < Fog::Collection
-
         model Fog::Rackspace::Queues::Queue
 
         # Returns list of queues
@@ -34,7 +33,7 @@ module Fog
         # @raise [Fog::Rackspace::Queues::ServiceError]
         # @see http://docs.rackspace.com/queues/api/v1.0/cq-devguide/content/GET_checkQueueExists__version__queues__queue_name__queue-operations-dle001.html
         def get(queue_name)
-          #204 no content is returned on success.  That's why no data is passed 
+          #204 no content is returned on success.  That's why no data is passed
           # from the GET to the constructor.
           service.get_queue(queue_name)
           new({:name => queue_name})

@@ -2,13 +2,11 @@ module Fog
   module Parsers
     module DNS
       module AWS
-
         class GetChange < Fog::Parsers::Base
-
           def reset
             @response = {}
           end
-          
+
           def end_element(name)
             case name
             when 'Id'
@@ -17,9 +15,7 @@ module Fog
               @response[name] = value
             end
           end
-
         end
-
       end
     end
   end

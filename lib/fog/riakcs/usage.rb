@@ -1,10 +1,9 @@
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'riakcs'))
+require 'fog/riakcs/core'
 require 'time'
 
 module Fog
   module RiakCS
     class Usage < Fog::Service
-
       requires :riakcs_access_key_id, :riakcs_secret_access_key
       recognizes :host, :path, :port, :scheme, :persistent
 
@@ -58,7 +57,6 @@ module Fog
           )
         end
       end
-
     end
   end
 end

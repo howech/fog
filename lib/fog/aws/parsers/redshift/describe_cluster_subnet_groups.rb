@@ -2,7 +2,6 @@ module Fog
   module Parsers
     module Redshift
       module AWS
-
         class DescribeClusterSubnetGroups < Fog::Parsers::Base
           # :marker - (String)
           # :cluster_subnet_groups - (Array<Hash>)
@@ -28,8 +27,8 @@ module Fog
             end
           end
 
-          def end_element(name)    
-            super        
+          def end_element(name)
+            super
             case name
             when 'Marker'
               @response[name] = value
@@ -44,7 +43,7 @@ module Fog
             when 'SubnetAvailabilityZone'
               @subnet['SubnetAvailabilityZone'] = {}
             when 'Name'
-              @subnet['SubnetAvailabilityZone']['Name'] = value              
+              @subnet['SubnetAvailabilityZone']['Name'] = value
             when 'SubnetIdentifier', 'SubnetStatus'
               @subnet[name] = value
             end
@@ -54,5 +53,3 @@ module Fog
     end
   end
 end
-
-

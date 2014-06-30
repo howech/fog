@@ -2,11 +2,10 @@ module Fog
   module AWS
     class IAM
       class Real
-
         require 'fog/aws/parsers/iam/basic'
 
         # Delete a role
-        # 
+        #
         # ==== Parameters
         # * role_name<~String>: name of the role to delete
         #
@@ -25,7 +24,6 @@ module Fog
             :parser     => Fog::Parsers::AWS::IAM::Basic.new
           )
         end
-
       end
     end
   end

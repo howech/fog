@@ -2,7 +2,6 @@ module Fog
   module AWS
     class RDS
       class Real
-
         require 'fog/aws/parsers/rds/delete_db_security_group'
 
         # deletes a db security group
@@ -19,14 +18,12 @@ module Fog
             :parser   => Fog::Parsers::AWS::RDS::DeleteDBSecurityGroup.new
           })
         end
-
       end
 
       class Mock
-
         def delete_db_security_group(name, description = name)
           response = Excon::Response.new
-          
+
           if self.data[:security_groups].delete(name)
             response.status = 200
             response.body = {
@@ -37,10 +34,7 @@ module Fog
             raise Fog::AWS::RDS::NotFound.new("DBSecurityGroupNotFound => #{name} not found")
           end
         end
-
       end
     end
   end
 end
-
-

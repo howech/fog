@@ -5,7 +5,6 @@ module Fog
   module Rackspace
     class AutoScale
       class Policies < Fog::Collection
-
         model Fog::Rackspace::AutoScale::Policy
 
         attr_accessor :group
@@ -18,7 +17,7 @@ module Fog
         # @raise [Fog::Rackspace::AutoScale:::BadRequest] - HTTP 400
         # @raise [Fog::Rackspace::AutoScale:::InternalServerError] - HTTP 500
         # @raise [Fog::Rackspace::AutoScale:::ServiceError]
-        # 
+        #
         # @see http://docs.rackspace.com/cas/api/v1.0/autoscale-devguide/content/GET_getPolicies_v1.0__tenantId__groups__groupId__policies_Policies.html
         def all
           data = service.list_policies(group.id).body['policies']
@@ -34,7 +33,7 @@ module Fog
         # @raise [Fog::Rackspace::AutoScale:::BadRequest] - HTTP 400
         # @raise [Fog::Rackspace::AutoScale:::InternalServerError] - HTTP 500
         # @raise [Fog::Rackspace::AutoScale:::ServiceError]
-        # 
+        #
         # @see http://docs.rackspace.com/cas/api/v1.0/autoscale-devguide/content/GET_getPolicy_v1.0__tenantId__groups__groupId__policies__policyId__Policies.html
         def get(policy_id)
           data = service.get_policy(group.id, policy_id).body['policy']
@@ -51,7 +50,7 @@ module Fog
         # @raise [Fog::Rackspace::AutoScale:::BadRequest] - HTTP 400
         # @raise [Fog::Rackspace::AutoScale:::InternalServerError] - HTTP 500
         # @raise [Fog::Rackspace::AutoScale:::ServiceError]
-        # 
+        #
         # @see http://docs.rackspace.com/cas/api/v1.0/autoscale-devguide/content/POST_createPolicies_v1.0__tenantId__groups__groupId__policies_Policies.html
         def create(attributes = {})
           super(attributes)
@@ -60,7 +59,6 @@ module Fog
         def new(attributes = {})
           super({:group => group}.merge(attributes))
         end
-
       end
     end
   end

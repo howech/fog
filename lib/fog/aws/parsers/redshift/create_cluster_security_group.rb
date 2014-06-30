@@ -2,12 +2,11 @@ module Fog
   module Parsers
     module Redshift
       module AWS
-
         require 'fog/aws/parsers/redshift/cluster_security_group_parser'
 
         class CreateClusterSecurityGroup < ClusterSecurityGroupParser
           # :cluster_security_group
-          
+
           def reset
             super
             @response = {}
@@ -17,7 +16,7 @@ module Fog
             super
           end
 
-          def end_element(name)            
+          def end_element(name)
             super
             case name
             when 'ClusterSecurityGroup'

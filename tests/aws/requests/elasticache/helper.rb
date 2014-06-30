@@ -1,7 +1,6 @@
 class AWS
   module Elasticache
     module Formats
-
       BASIC = {
         'ResponseMetadata' => {'RequestId' => String}
       }
@@ -15,6 +14,25 @@ class AWS
       }
       SINGLE_SECURITY_GROUP = BASIC.merge('CacheSecurityGroup' => SECURITY_GROUP)
       DESCRIBE_SECURITY_GROUPS = {'CacheSecurityGroups' => [SECURITY_GROUP]}
+
+      CACHE_SUBNET_GROUP = {
+        'CacheSubnetGroupName' => String,
+        'CacheSubnetGroupDescription' => String,
+        'VpcId' => String,
+        'Subnets' => [String]
+      }
+
+      CREATE_CACHE_SUBNET_GROUP = BASIC.merge({
+         'CreateCacheSubnetGroupResult' => {
+           'CacheSubnetGroup' => CACHE_SUBNET_GROUP
+         }
+       })
+
+      DESCRIBE_CACHE_SUBNET_GROUPS = BASIC.merge({
+        'DescribeCacheSubnetGroupsResult' => {
+          'CacheSubnetGroups' => [CACHE_SUBNET_GROUP]
+        }
+      })
 
       # Cache Parameter Groups
       PARAMETER_GROUP = {
@@ -63,7 +81,7 @@ class AWS
         'SourceType'                  => String,
       }
       EVENT_LIST = [EVENT]
-      
+
       RESERVED_CACHE_CLUSTER = {
         'CacheNodeCount'                => Integer,
         'CacheNodeType'                 => String,
@@ -79,7 +97,7 @@ class AWS
         'UsagePrice'                    => Float
       }
       RESERVED_CACHE_CLUSTER_LIST = [RESERVED_CACHE_CLUSTER]
-      
+
     end
   end
 end

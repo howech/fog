@@ -2,7 +2,6 @@ module Fog
   module AWS
     class RDS
       class Real
-
         # removes tags from a database instance
         # http://docs.amazonwebservices.com/AmazonRDS/latest/APIReference/API_RemoveTagsFromResource.html
         # ==== Parameters
@@ -11,7 +10,7 @@ module Fog
         # ==== Returns
         # * response<~Excon::Response>:
         #   * body<~Hash>:
-        def remove_tags_from_resource(rds_id, keys)          
+        def remove_tags_from_resource(rds_id, keys)
           request(
             { 'Action'        => 'RemoveTagsFromResource',
               'ResourceName'  => "arn:aws:rds:#{@region}:#{owner_id}:db:#{rds_id}",
@@ -19,11 +18,9 @@ module Fog
             }.merge(Fog::AWS.indexed_param('TagKeys.member.%d', keys))
           )
         end
-
       end
 
       class Mock
-
         def remove_tags_from_resource(rds_id, keys)
           response = Excon::Response.new
           if server = self.data[:servers][rds_id]
@@ -37,7 +34,6 @@ module Fog
             raise Fog::AWS::RDS::NotFound.new("DBInstance #{rds_id} not found")
           end
         end
-
       end
     end
   end

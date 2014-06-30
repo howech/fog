@@ -2,7 +2,6 @@ module Fog
   module Compute
     class AWS
       class Real
-
         require 'fog/aws/parsers/compute/basic'
 
         # Deletes a VPC. You must detach or delete all gateways or other objects
@@ -28,7 +27,7 @@ module Fog
           )
         end
       end
-      
+
       class Mock
         def delete_vpc(vpc_id)
           Excon::Response.new.tap do |response|

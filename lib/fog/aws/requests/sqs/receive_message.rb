@@ -2,7 +2,6 @@ module Fog
   module AWS
     class SQS
       class Real
-
         require 'fog/aws/parsers/sqs/receive_message'
 
         # Get a message from a queue (marks it as unavailable temporarily, but does not remove from queue, see delete_message)
@@ -26,17 +25,15 @@ module Fog
             :parser         => Fog::Parsers::AWS::SQS::ReceiveMessage.new
           }.merge!(options))
         end
-
       end
-      
+
       class Mock
-        
         def receive_message(queue_url, options = {})
           Excon::Response.new.tap do |response|
             if (queue = data[:queues][queue_url])
               max_number_of_messages = options['MaxNumberOfMessages'] || 1
               now = Time.now
-              
+
               messages = []
 
               queue[:messages].values.each do |m|
@@ -80,7 +77,6 @@ module Fog
             end
           end
         end
-        
       end
     end
   end

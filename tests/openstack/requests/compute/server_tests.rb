@@ -25,7 +25,7 @@ Shindo.tests('Fog::Compute[:openstack] | server requests', ['openstack']) do
     'links'           => Array,
     'security_groups' => Fog::Nullable::Array,
   }
-  
+
   @reservation_format = {
     'reservation_id' => String,
   }
@@ -49,6 +49,7 @@ Shindo.tests('Fog::Compute[:openstack] | server requests', ['openstack']) do
     @image_id = get_image_ref
     @snapshot_id = nil
     @flavor_id = get_flavor_ref
+    @security_group_name = get_security_group_ref
 
     tests('#create_server("test", #{@image_id} , 19)').formats(@create_format, false) do
       data = Fog::Compute[:openstack].create_server("test", @image_id, @flavor_id).body['server']
@@ -69,7 +70,7 @@ Shindo.tests('Fog::Compute[:openstack] | server requests', ['openstack']) do
       @reservation_id = data['reservation_id']
       data
     end
-    
+
     tests('#validate_multi_create') do
       passed = false
       @multi_create_servers = []
@@ -87,7 +88,7 @@ Shindo.tests('Fog::Compute[:openstack] | server requests', ['openstack']) do
         Fog::Compute[:openstack].servers.get(server).destroy
       }
     end
-   
+
     #LIST
     #NOTE: we can remove strict=false if we remove uuid from GET /servers
     tests('#list_servers').formats({'servers' => [OpenStack::Compute::Formats::SUMMARY]}, false) do
@@ -100,7 +101,7 @@ Shindo.tests('Fog::Compute[:openstack] | server requests', ['openstack']) do
     end
 
     #CHANGE PASSWORD
-    if set_password_enabled 
+    if set_password_enabled
       tests("#change_server_password(#{@server_id}, 'fogupdatedserver')").succeeds do
         Fog::Compute[:openstack].change_server_password(@server_id, 'foggy')
       end
@@ -112,6 +113,16 @@ Shindo.tests('Fog::Compute[:openstack] | server requests', ['openstack']) do
       Fog::Compute[:openstack].update_server(@server_id, :name => 'fogupdatedserver')
     end
     Fog::Compute[:openstack].servers.get(@server_id).wait_for { ready? }
+
+    #ADD SECURITY GROUP
+    tests("#add_security_group(#{@server_id}, #{@security_group_name})").succeeds do
+      Fog::Compute[:openstack].add_security_group(@server_id, @security_group_name)
+    end
+
+    #REMOVE SECURITY GROUP
+    tests("#remove_security_group(#{@server_id}, #{@security_group_name})").succeeds do
+      Fog::Compute[:openstack].remove_security_group(@server_id, @security_group_name)
+    end
 
     #CREATE IMAGE WITH METADATA
     tests("#create_image(#{@server_id}, 'fog')").formats('image' => @image_format) do

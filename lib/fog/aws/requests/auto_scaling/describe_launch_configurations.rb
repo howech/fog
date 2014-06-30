@@ -1,9 +1,7 @@
 module Fog
   module AWS
     class AutoScaling
-
       class Real
-
         require 'fog/aws/parsers/auto_scaling/describe_launch_configurations'
 
         # Returns a full description of the launch configurations given the
@@ -80,17 +78,15 @@ module Fog
             :parser  => Fog::Parsers::AWS::AutoScaling::DescribeLaunchConfigurations.new
           }.merge!(options))
         end
-
       end
 
       class Mock
-
         def describe_launch_configurations(options = {})
           launch_configuration_names = options.delete('LaunchConfigurationNames')
           # even a nil object will turn into an empty array
           lc = [*launch_configuration_names]
 
-          launch_configurations = 
+          launch_configurations =
              if lc.any?
                lc.map do |lc_name|
                  l_conf = self.data[:launch_configurations].find { |name, data| name == lc_name }
@@ -109,9 +105,7 @@ module Fog
           }
           response
         end
-
       end
-
     end
   end
 end

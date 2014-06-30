@@ -2,7 +2,6 @@ module Fog
   module Compute
     class DigitalOcean
       class Real
-
         #
         # FIXME: missing ssh keys support
         #
@@ -12,14 +11,12 @@ module Fog
             :method   => 'GET',
             :path     => "droplets/#{id}/destroy",
             # We scrub data so future users can't read our disks.
-            :query    => {:scrub_data => '1' },
+            :query    => {:scrub_data => '1' }
           )
         end
-
       end
 
       class Mock
-
         def destroy_server( id )
           response = Excon::Response.new
           response.status = 200
@@ -32,7 +29,6 @@ module Fog
 
           response
         end
-
       end
     end
   end

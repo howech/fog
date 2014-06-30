@@ -3,7 +3,6 @@ require 'fog/compute/models/server'
 module Fog
   module Compute
     class AWS
-
       class Server < Fog::Compute::Server
         extend Fog::Deprecation
         deprecate :ip_address, :public_ip_address
@@ -17,18 +16,19 @@ module Fog
         attribute :block_device_mapping,     :aliases => 'blockDeviceMapping'
         attribute :network_interfaces,       :aliases => 'networkInterfaces'
         attribute :client_token,             :aliases => 'clientToken'
+        attribute :disable_api_termination,  :aliases => 'disableApiTermination'
         attribute :dns_name,                 :aliases => 'dnsName'
         attribute :ebs_optimized,            :aliases => 'ebsOptimized'
         attribute :groups
         attribute :flavor_id,                :aliases => 'instanceType'
-        attribute :hypervisor              
+        attribute :hypervisor
         attribute :iam_instance_profile,     :aliases => 'iamInstanceProfile'
         attribute :image_id,                 :aliases => 'imageId'
         attr_accessor :instance_initiated_shutdown_behavior
         attribute :kernel_id,                :aliases => 'kernelId'
         attribute :key_name,                 :aliases => 'keyName'
         attribute :created_at,               :aliases => 'launchTime'
-        attribute :lifecycle,                :aliases => 'instanceLifecycle' 
+        attribute :lifecycle,                :aliases => 'instanceLifecycle'
         attribute :monitoring,               :squash =>  'state'
         attribute :placement_group,          :aliases => 'groupName'
         attribute :platform,                 :aliases => 'platform'
@@ -56,9 +56,8 @@ module Fog
         attr_accessor                        :password
         attr_writer                          :iam_instance_profile_name, :iam_instance_profile_arn
 
-
         def initialize(attributes={})
-          self.groups     ||= ["default"] unless (attributes[:subnet_id] || attributes[:security_group_ids])
+          self.groups     ||= ["default"] unless (attributes[:subnet_id] || attributes[:security_group_ids] || attributes[:network_interfaces])
           self.flavor_id  ||= 't1.micro'
 
           # Old 'connection' is renamed as service and should be used instead
@@ -117,7 +116,7 @@ module Fog
         end
 
         def flavor
-          @flavor ||= service.flavors.all.detect {|flavor| flavor.id == flavor_id}
+          @flavor ||= service.flavors.all.find {|flavor| flavor.id == flavor_id}
         end
 
         def key_pair
@@ -146,7 +145,9 @@ module Fog
 
           options = {
             'BlockDeviceMapping'          => block_device_mapping,
+            'NetworkInterfaces'           => network_interfaces,
             'ClientToken'                 => client_token,
+            'DisableApiTermination'       => disable_api_termination,
             'EbsOptimized'                => ebs_optimized,
             'IamInstanceProfile.Arn'      => @iam_instance_profile_arn,
             'IamInstanceProfile.Name'     => @iam_instance_profile_name,
@@ -185,7 +186,11 @@ module Fog
               else
                 options["NetworkInterface.0.SecurityGroupId.0"] = options['SecurityGroupId']
               end
-              options.delete('SecurityGroupId')              
+              options.delete('SecurityGroupId')
+              if private_ip_address
+                options.delete('PrivateIpAddress')
+                options['NetworkInterface.0.PrivateIpAddress'] = private_ip_address
+              end
             end
           else
             options.delete('SubnetId')
@@ -197,20 +202,17 @@ module Fog
           if tags = self.tags
             # expect eventual consistency
             Fog.wait_for { self.reload rescue nil }
-            for key, value in (self.tags = tags)
-              service.tags.create(
-                :key          => key,
-                :resource_id  => self.identity,
-                :value        => value
-              )
-            end
+            service.create_tags(
+              self.identity,
+              tags
+            )
           end
 
           true
         end
 
         def setup(credentials = {})
-          requires :public_ip_address, :username
+          requires :ssh_ip_address, :username
           require 'net/ssh'
 
           commands = [
@@ -225,7 +227,7 @@ module Fog
           # wait for aws to be ready
           wait_for { sshable?(credentials) }
 
-          Fog::SSH.new(public_ip_address, username, credentials).run(commands)
+          Fog::SSH.new(ssh_ip_address, username, credentials).run(commands)
         end
 
         def start
@@ -271,9 +273,7 @@ module Fog
             self.attributes[:placement] = new_placement
           end
         end
-
       end
-
     end
   end
 end

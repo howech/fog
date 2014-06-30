@@ -7,7 +7,6 @@ module Fog
   module Rackspace
     class AutoScale
       class Group < Fog::Model
-        
         # @!attribute [r] id
         # @return [String] The autoscale group's id
         identity :id
@@ -16,8 +15,8 @@ module Fog
         # @return [Array] group links.
         attribute :links
 
-        # Gets the group configuration for this autoscale group. The configuration describes the 
-        # minimum number of entities in the group, the maximum number of entities in the group, 
+        # Gets the group configuration for this autoscale group. The configuration describes the
+        # minimum number of entities in the group, the maximum number of entities in the group,
         # the global cooldown time for the group, and other metadata.
         #
         # @return [Fog::Rackspace::AutoScale::GroupConfiguration] group_config if found
@@ -29,7 +28,7 @@ module Fog
         #
         # @see http://docs.rackspace.com/cas/api/v1.0/autoscale-devguide/content/GET_getGroupConfig_v1.0__tenantId__groups__groupId__config_Configurations.html
         def group_config
-          if attributes[:group_config].nil?
+          if attributes[:group_config].nil? && persisted?
             data = service.get_group_config(identity)
             attributes[:group_config] = load_model('GroupConfig', data.body['groupConfiguration'])
           end
@@ -47,8 +46,8 @@ module Fog
           end
         end
 
-        # Gets the launch configuration for this autoscale group. The launch configuration describes 
-        # the details of how to create a server, from what image to create a server, which load balancers 
+        # Gets the launch configuration for this autoscale group. The launch configuration describes
+        # the details of how to create a server, from what image to create a server, which load balancers
         # to join the server to, which networks to add the server to, and other metadata.
         #
         # @return [Fog::Rackspace::AutoScale::LaunchConfiguration] group_config if found
@@ -60,7 +59,7 @@ module Fog
         #
         # @see http://docs.rackspace.com/cas/api/v1.0/autoscale-devguide/content/GET_getLaunchConfig_v1.0__tenantId__groups__groupId__launch_Configurations.html
         def launch_config
-          if attributes[:launch_config].nil?
+          if attributes[:launch_config].nil?  && persisted?
             data = service.get_launch_config(identity)
             attributes[:launch_config] = load_model('LaunchConfig', data.body['launchConfiguration'])
           end
@@ -78,20 +77,29 @@ module Fog
           end
         end
 
-        # For the specified autoscaling group, this operation returns a list of the scaling policies 
-        # that are available to the group. Each policy is described in terms of an ID, name, type, 
+        # For the specified autoscaling group, this operation returns a list of the scaling policies
+        # that are available to the group. Each policy is described in terms of an ID, name, type,
         # adjustment, cooldown time, and links.
         #
         # @return [Fog::Rackspace::AutoScale::Policies] policies
         #
         # @see http://docs.rackspace.com/cas/api/v1.0/autoscale-devguide/content/GET_getPolicies_v1.0__tenantId__groups__groupId__policies_Policies.html
         def policies
-          @policies ||= load_model('Policies')
+          return @policies if @policies
+          if persisted?
+            @policies = load_model('Policies')
+          else
+            @policies = Fog::Rackspace::AutoScale::Policies.new(:service => service, :group => self)
+            @policies.clear
+          end
+          @policies
+          # return nil unless persisted?
+          # @policies ||= load_model('Policies')
         end
 
         # Creates group
         # * requires attributes: :launch_config, :group_config, :policies
-        # 
+        #
         # @return [Boolean] returns true if group is being created
         #
         # @raise [Fog::Rackspace::AutoScale:::NotFound] - HTTP 404
@@ -100,7 +108,7 @@ module Fog
         # @raise [Fog::Rackspace::AutoScale:::ServiceError]
         #
         # @see Groups#create
-        # @see http://docs.rackspace.com/cas/api/v1.0/autoscale-devguide/content/POST_createGroup_v1.0__tenantId__groups_Groups.html   
+        # @see http://docs.rackspace.com/cas/api/v1.0/autoscale-devguide/content/POST_createGroup_v1.0__tenantId__groups_Groups.html
         def save
           requires :launch_config, :group_config, :policies
           raise Fog::Errors::Error.new("You should update launch_config and group_config directly") if persisted?
@@ -111,7 +119,7 @@ module Fog
           }
           group_config_hash = {
             'name' => group_config.name,
-            'cooldown' => group_config.cooldown, 
+            'cooldown' => group_config.cooldown,
             'maxEntities' => group_config.max_entities,
             'minEntities' => group_config.min_entities
           }
@@ -155,7 +163,7 @@ module Fog
         end
 
         # This operation pauses all execution of autoscaling policies.
-        # 
+        #
         # @note NOT IMPLEMENTED YET
         # @return [Boolean] returns true if paused
         #
@@ -172,7 +180,7 @@ module Fog
         end
 
         # This operation resumes all execution of autoscaling policies.
-        # 
+        #
         # @note NOT IMPLEMENTED YET
         # @return [Boolean] returns true if resumed
         #
@@ -200,7 +208,6 @@ module Fog
           end
           model
         end
-
       end
     end
   end

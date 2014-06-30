@@ -2,7 +2,6 @@ module Fog
   module AWS
     class SQS
       class Real
-
         require 'fog/aws/parsers/sqs/basic'
 
         # Delete a queue
@@ -21,18 +20,16 @@ module Fog
             :path    => path_from_queue_url(queue_url),
           })
         end
-
       end
-      
+
       class Mock
-        
         def delete_queue(queue_url)
           Excon::Response.new.tap do |response|
             if (queue = data[:queues][queue_url])
               response.status = 200
-              
+
               data[:queues].delete(queue_url)
-              
+
               response.body = {
                 'ResponseMetadata' => {
                   'RequestId' => Fog::AWS::Mock.request_id
@@ -44,9 +41,7 @@ module Fog
             end
           end
         end
-        
       end
-      
     end
   end
 end

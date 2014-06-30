@@ -2,11 +2,10 @@ module Fog
   module AWS
     class IAM
       class Real
-
         require 'fog/aws/parsers/iam/single_role'
 
         # Get the specified role
-        # 
+        #
         # ==== Parameters
         # role_name<~String>
 
@@ -15,12 +14,12 @@ module Fog
         #   * body<~Hash>:
         #     * Role<~Hash>:
         #       * 'Arn'<~String> -
-        #       * 'AssumeRolePolicyDocument'<~String<  
+        #       * 'AssumeRolePolicyDocument'<~String<
         #       * 'Path'<~String> -
         #       * 'RoleId'<~String> -
         #       * 'RoleName'<~String> -
         #     * 'RequestId'<~String> - Id of the request
-        #     
+        #
         # ==== See Also
         # http://docs.amazonwebservices.com/IAM/latest/APIReference/API_GetRole.html
         #
@@ -31,7 +30,6 @@ module Fog
             :parser     => Fog::Parsers::AWS::IAM::SingleRole.new
           )
         end
-
       end
     end
   end

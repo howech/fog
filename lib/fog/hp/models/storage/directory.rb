@@ -5,9 +5,7 @@ require 'fog/hp/models/storage/metadata'
 module Fog
   module Storage
     class HP
-
       class Directory < Fog::Model
-
         identity  :key,               :aliases => 'name'
 
         attribute :bytes,             :aliases => 'X-Container-Bytes-Used'
@@ -248,8 +246,15 @@ module Fog
           end
         end
 
-        def save(options = {})
+        def save(new_options = {})
           requires :key
+          options = {}
+          #these are default/previous options
+          meta_hash = {}
+          metadata.each { |meta| meta_hash.store(meta.key, meta.value) }
+          if meta_hash
+            options.merge!(meta_hash)
+          end
           # write out the acls into the headers before save
           options.merge!(service.perm_acl_to_header(@read_acl, @write_acl))
           options.merge!({'X-Container-Sync-To' => self.sync_to}) unless self.sync_to.nil?
@@ -259,11 +264,10 @@ module Fog
           options.merge!({'X-Container-Meta-Web-Listings-Css' => self.web_listings_css}) unless self.web_listings_css.nil?
           options.merge!({'X-Container-Meta-Web-Error' => self.web_error}) unless self.web_error.nil?
           # get the metadata and merge them in
-          meta_hash = {}
-          metadata.each { |meta| meta_hash.store(meta.key, meta.value) }
-          if meta_hash
-            options.merge!(meta_hash)
-          end
+
+          # merge user options at the end
+          options.merge!(new_options)
+
           service.put_container(key, options)
           # Added an extra check to see if CDN is enabled for the container
           if (!service.cdn.nil? && service.cdn.enabled?)
@@ -295,9 +299,7 @@ module Fog
           end
           true
         end
-
       end
-
     end
   end
 end

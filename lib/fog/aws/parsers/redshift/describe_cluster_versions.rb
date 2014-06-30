@@ -2,7 +2,6 @@ module Fog
   module Parsers
     module Redshift
       module AWS
-
         class DescribeClusterVersions < Fog::Parsers::Base
           # :marker - (String)
           # :cluster_versions - (Array<Hash>)
@@ -19,16 +18,16 @@ module Fog
             super
             case name
             when 'ClusterVersions'
-              @cluster_version = {}              
+              @cluster_version = {}
             when 'ClusterVersion'
-              # Sadly, there are two nodes of different type named cluster_version 
+              # Sadly, there are two nodes of different type named cluster_version
               # that are nested, so we keep track of which one we're in
               @cluster_version_depth += 1
             end
           end
 
-          def end_element(name)           
-            super 
+          def end_element(name)
+            super
             case name
             when 'Marker'
               @response[name] = value
@@ -39,7 +38,7 @@ module Fog
                 @cluster_version = {}
               else
                 @cluster_version[name] = value
-              end                
+              end
             when 'ClusterParameterGroupFamily', 'Description'
               @cluster_version[name] = value
             end
@@ -49,5 +48,3 @@ module Fog
     end
   end
 end
-
-

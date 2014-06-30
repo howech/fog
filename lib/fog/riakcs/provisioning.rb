@@ -1,9 +1,8 @@
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'riakcs'))
+require 'fog/riakcs/core'
 
 module Fog
   module RiakCS
     class Provisioning < Fog::Service
-
       class UserAlreadyExists  < Fog::RiakCS::Provisioning::Error; end
       class ServiceUnavailable < Fog::RiakCS::Provisioning::Error; end
 
@@ -53,7 +52,7 @@ module Fog
           @connection_options       = options[:connection_options] || {}
           @persistent               = options[:persistent]         || false
 
-          @raw_connection = Fog::Connection.new(riakcs_uri, @persistent, @connection_options)
+          @raw_connection = Fog::XML::Connection.new(riakcs_uri, @persistent, @connection_options)
 
           @s3_connection  = Fog::Storage.new(
             :provider              => 'AWS',
@@ -92,7 +91,6 @@ module Fog
           response
         end
       end
-
     end
   end
 end

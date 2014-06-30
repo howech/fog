@@ -2,11 +2,10 @@ module Fog
   module AWS
     class IAM
       class Real
-
         require 'fog/aws/parsers/iam/list_groups'
 
         # List groups
-        # 
+        #
         # ==== Parameters
         # * options<~Hash>:
         #   * 'Marker'<~String>: used to paginate subsequent requests
@@ -35,11 +34,9 @@ module Fog
             :parser   => Fog::Parsers::AWS::IAM::ListGroups.new
           }.merge!(options))
         end
-
       end
 
       class Mock
-
         def list_groups(options = {} )
           #FIXME: Doesn't observe options
           Excon::Response.new.tap do |response|

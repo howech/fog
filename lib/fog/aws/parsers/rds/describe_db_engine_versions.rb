@@ -2,11 +2,9 @@ module Fog
   module Parsers
     module AWS
       module RDS
-
         require 'fog/aws/parsers/rds/db_engine_version_parser'
-        
-        class DescribeDBEngineVersions < Fog::Parsers::AWS::RDS::DBEngineVersionParser
 
+        class DescribeDBEngineVersions < Fog::Parsers::AWS::RDS::DBEngineVersionParser
           def reset
             @response = { 'DescribeDBEngineVersionsResult' => {'DBEngineVersions' => []}, 'ResponseMetadata' => {} }
             super
@@ -18,7 +16,7 @@ module Fog
 
           def end_element(name)
             case name
-            when 'DBEngineVersion' then 
+            when 'DBEngineVersion' then
               @response['DescribeDBEngineVersionsResult']['DBEngineVersions'] << @db_engine_version
               @db_engine_version = fresh_engine_version
             when 'Marker'
@@ -28,11 +26,8 @@ module Fog
             else
               super
             end
-
           end
-
         end
-
       end
     end
   end

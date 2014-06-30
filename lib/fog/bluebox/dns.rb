@@ -1,10 +1,8 @@
-require 'fog/bluebox'
-require 'fog/dns'
+require 'fog/bluebox/core'
 
 module Fog
   module DNS
     class Bluebox < Fog::Service
-
       requires :bluebox_api_key, :bluebox_customer_id
       recognizes :bluebox_host, :bluebox_port, :bluebox_scheme, :persistent
 
@@ -60,7 +58,7 @@ module Fog
           @persistent = options[:persistent]      || false
           @port       = options[:bluebox_port]    || 443
           @scheme     = options[:bluebox_scheme]  || 'https'
-          @connection = Fog::Connection.new("#{@scheme}://#{@host}:#{@port}", @persistent, @connection_options)
+          @connection = Fog::XML::Connection.new("#{@scheme}://#{@host}:#{@port}", @persistent, @connection_options)
         end
 
         def reload
@@ -97,7 +95,6 @@ module Fog
         def auth_header
           @auth_header ||= Base64.encode64("#{@bluebox_customer_id}:#{@bluebox_api_key}").gsub("\n",'')
         end
-
       end
     end
   end

@@ -2,7 +2,6 @@ module Fog
   module AWS
     class SQS
       class Real
-
         require 'fog/aws/parsers/sqs/list_queues'
 
         # List queues
@@ -22,12 +21,12 @@ module Fog
           }.merge!(options))
         end
       end
-      
+
       class Mock
         def list_queues(options = {})
           Excon::Response.new.tap do |response|
             response.status = 200
-            
+
             response.body = {
               'ResponseMetadata' => {
                 'RequestId' => Fog::AWS::Mock.request_id

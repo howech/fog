@@ -1,5 +1,4 @@
-require 'fog/vcloud_director'
-require 'fog/compute'
+require 'fog/vcloud_director/core'
 
 class VcloudDirectorParser < Fog::Parsers::Base
   def extract_attributes(attributes_xml)
@@ -25,7 +24,6 @@ end
 module Fog
   module Compute
     class VcloudDirector < Fog::Service
-
       module Defaults
         PATH        = '/api'
         PORT        = 443
@@ -39,6 +37,7 @@ module Fog
       class Unauthorized < Fog::VcloudDirector::Errors::Unauthorized; end
       class Forbidden < Fog::VcloudDirector::Errors::Forbidden; end
       class Conflict < Fog::VcloudDirector::Errors::Conflict; end
+      class MalformedResponse < Fog::VcloudDirector::Errors::MalformedResponse; end
 
       class DuplicateName < Fog::VcloudDirector::Errors::DuplicateName; end
       class TaskError < Fog::VcloudDirector::Errors::TaskError; end
@@ -127,6 +126,7 @@ module Fog
       request :get_metadata
       request :get_network
       request :get_network_cards_items_list
+      request :get_network_complete
       request :get_network_config_section_vapp
       request :get_network_config_section_vapp_template
       request :get_network_connection_system_section_vapp
@@ -203,6 +203,7 @@ module Fog
       request :post_configure_edge_gateway_services
       request :post_consolidate_vm_vapp
       request :post_consolidate_vm_vapp_template
+      request :post_create_catalog_item
       request :post_create_org_vdc_network
       request :post_deploy_vapp
       request :post_detach_disk
@@ -244,6 +245,7 @@ module Fog
       request :put_media_metadata_item_metadata
       request :put_memory
       request :put_metadata_value # deprecated
+      request :put_network
       request :put_network_connection_system_section_vapp
       request :put_vapp_metadata_item_metadata
       request :put_vapp_name_and_description
@@ -304,7 +306,7 @@ module Fog
         end
 
         def get_by_name(item_name)
-          item_found = item_list.detect {|item| item[:name] == item_name}
+          item_found = item_list.find {|item| item[:name] == item_name}
           return nil unless item_found
           get(item_found[:id])
         end
@@ -335,7 +337,7 @@ module Fog
           @persistent = options[:persistent]  || false
           @port       = options[:port]        || Fog::Compute::VcloudDirector::Defaults::PORT
           @scheme     = options[:scheme]      || Fog::Compute::VcloudDirector::Defaults::SCHEME
-          @connection = Fog::Connection.new("#{@scheme}://#{@host}:#{@port}", @persistent, @connection_options)
+          @connection = Fog::XML::Connection.new("#{@scheme}://#{@host}:#{@port}", @persistent, @connection_options)
           @end_point = "#{@scheme}://#{@host}#{@path}/"
           @api_version = options[:vcloud_director_api_version] || Fog::Compute::VcloudDirector::Defaults::API_VERSION
           @show_progress = options[:vcloud_director_show_progress]
@@ -364,6 +366,13 @@ module Fog
         def request(params)
           begin
             do_request(params)
+          rescue Excon::Errors::SocketError::EOFError
+            # This error can occur if Vcloud receives a request from a network
+            # it deems to be unauthorized; no HTTP response is sent, but the
+            # connection is sent a signal to terminate early.
+            raise(
+              MalformedResponse, "Connection unexpectedly terminated by vcloud"
+            )
           # this is to know if Excon::Errors::Unauthorized really happens
           #rescue Excon::Errors::Unauthorized
           #  login
@@ -447,11 +456,15 @@ module Fog
         private
 
         def login
-          response = post_login_session
-          x_vcloud_authorization = response.headers.keys.detect do |key|
-            key.downcase == 'x-vcloud-authorization'
+          if @vcloud_token = ENV['FOG_VCLOUD_TOKEN']
+            response = get_current_session
+          else
+            response = post_login_session
+            x_vcloud_authorization = response.headers.keys.find do |key|
+              key.downcase == 'x-vcloud-authorization'
+            end
+            @vcloud_token = response.headers[x_vcloud_authorization]
           end
-          @vcloud_token = response.headers[x_vcloud_authorization]
           @org_name = response.body[:org]
           @user_name = response.body[:user]
         end
@@ -462,7 +475,6 @@ module Fog
           @vcloud_token = nil
           @org_name = nil
         end
-
       end
 
       class Mock
@@ -477,6 +489,11 @@ module Fog
             uplink_network_uuid  = uuid
             isolated_vdc1_network_uuid = uuid
             isolated_vdc2_network_uuid = uuid
+            vapp1_id = "vapp-#{uuid}"
+            vapp2_id = "vapp-#{uuid}"
+            vapp1vm1_id = "vm-#{uuid}"
+            vapp2vm1_id = "vm-#{uuid}"
+            vapp2vm2_id = "vm-#{uuid}"
 
             hash[key] = {
               :catalogs => {
@@ -633,6 +650,26 @@ module Fog
                 :uuid => uuid
               },
               :tasks => {},
+
+              :vapps => {
+                vapp1_id => {
+                  :name => 'mock-vapp-1',
+                  :vdc_id => vdc1_uuid,
+                  :description => "Mock vApp 1",
+                  :networks => [
+                    { :parent_id => default_network_uuid, },
+                  ],
+                },
+                vapp2_id => {
+                  :name => 'mock-vapp-2',
+                  :vdc_id => vdc2_uuid,
+                  :description => "Mock vApp 2",
+                  :networks => [
+                    { :parent_id => default_network_uuid },
+                  ]
+                },
+              },
+
               :vdc_storage_classes => {
                 uuid => {
                   :default => true,
@@ -643,6 +680,7 @@ module Fog
                   :vdc => vdc1_uuid,
                 }
               },
+
               :vdcs => {
                 vdc1_uuid => {
                   :description => 'vDC1 for mocking',
@@ -652,7 +690,44 @@ module Fog
                   :description => 'vDC2 for mocking',
                   :name => 'MockVDC 2'
                 },
-              }
+              },
+
+              :vms => {
+                vapp1vm1_id => {
+                  :name => 'mock-vm-1-1',
+                  :parent_vapp => vapp1_id,
+                  :nics => [
+                    {
+                      :network_name => 'Default Network',
+                      :mac_address => "00:50:56:aa:bb:01",
+                      :ip_address => "192.168.1.33",
+                    },
+                  ],
+                },
+                vapp2vm1_id => {
+                  :name => 'mock-vm-2-1',
+                  :parent_vapp => vapp2_id,
+                  :nics => [
+                    {
+                      :network_name => 'Default Network',
+                      :mac_address => "00:50:56:aa:bb:02",
+                      :ip_address => "192.168.1.34",
+                    },
+                  ],
+                },
+                vapp2vm2_id => {
+                  :name => 'mock-vm-2-2',
+                  :parent_vapp => vapp2_id,
+                  :nics => [
+                    {
+                      :network_name => 'Default Network',
+                      :mac_address => "00:50:56:aa:bb:03",
+                      :ip_address => "192.168.1.35",
+                    },
+                  ],
+                },
+              },
+
             }
           end[@vcloud_director_username]
         end
@@ -666,7 +741,7 @@ module Fog
           @persistent = options[:persistent] || false
           @port = options[:port] || Fog::Compute::VcloudDirector::Defaults::PORT
           @scheme = options[:scheme] || Fog::Compute::VcloudDirector::Defaults::SCHEME
-          #@connection = Fog::Connection.new("#{@scheme}://#{@host}:#{@port}", @persistent, @connection_options)
+          #@connection = Fog::XML::Connection.new("#{@scheme}://#{@host}:#{@port}", @persistent, @connection_options)
           @end_point = "#{@scheme}://#{@host}#{@path}/"
           @api_version = options[:vcloud_director_api_version] || Fog::Compute::VcloudDirector::Defaults::API_VERSION
         end
@@ -778,7 +853,6 @@ module Fog
         def xsi_schema_location
           "http://www.vmware.com/vcloud/v1.5 http://#{@host}#{@path}/v1.5/schema/master.xsd"
         end
-
       end
     end
   end

@@ -2,10 +2,9 @@ module Fog
   module Parsers
     module AWS
       module IAM
-
         class UpdateUser < Fog::Parsers::Base
         # http://docs.amazonwebservices.com/IAM/latest/APIReference/index.html?API_UpdateUser.html
-        
+
           def reset
             @response = { 'User' => {} }
           end
@@ -18,9 +17,7 @@ module Fog
               @response[name] = value
             end
           end
-
         end
-
       end
     end
   end

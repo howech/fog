@@ -3,9 +3,7 @@ require 'fog/core/model'
 module Fog
   module Storage
     class OpenStack
-
       class File < Fog::Model
-
         identity  :key,             :aliases => 'name'
 
         attribute :content_length,  :aliases => ['bytes', 'Content-Length'], :type => :integer
@@ -66,13 +64,13 @@ module Fog
         end
 
         # Get a url for file.
-        # 
+        #
         #     required attributes: key
-        # 
+        #
         # @param expires [String] number of seconds (since 1970-01-01 00:00) before url expires
         # @param options [Hash]
         # @return [String] url
-        # 
+        #
         def url(expires, options = {})
           requires :directory, :key
           self.service.create_temp_url(directory.key, key, expires, "GET", options)
@@ -82,7 +80,6 @@ module Fog
           requires :key
           self.collection.get_url(self.key)
         end
-
 
         def save(options = {})
           requires :body, :directory, :key
@@ -160,7 +157,6 @@ module Fog
           merge_attributes(data.headers.reject {|key, value| ['Content-Length', 'Content-Type'].include?(key)})
         end
       end
-
     end
   end
 end

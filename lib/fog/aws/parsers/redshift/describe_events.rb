@@ -2,7 +2,6 @@ module Fog
   module Parsers
     module Redshift
       module AWS
-
         class DescribeEvents < Fog::Parsers::Base
           # :marker - (String)
           # :events - (Array)
@@ -10,7 +9,7 @@ module Fog
           #   :source_type - (String)
           #   :message - (String)
           #   :date - (Time)
-          
+
           def reset
             @response = { 'Events' => [] }
           end
@@ -23,7 +22,7 @@ module Fog
             end
           end
 
-          def end_element(name)            
+          def end_element(name)
             super
             case name
             when 'Marker'

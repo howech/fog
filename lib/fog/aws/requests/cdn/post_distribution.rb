@@ -2,13 +2,12 @@ module Fog
   module CDN
     class AWS
       class Real
-
         require 'fog/aws/parsers/cdn/distribution'
 
         # Create a new distribution in CloudFront.
         #
         # @param options [Hash] Config for distribution.
-        # 
+        #
         #   REQUIRED:
         #   * S3Origin [Hash]:
         #     * DNSName [String] Origin to associate with distribution, ie 'mybucket.s3.amazonaws.com'.
@@ -50,7 +49,7 @@ module Fog
         #       * TrustedSigners [Array] - Trusted signers.
         #
         # @see http://docs.amazonwebservices.com/AmazonCloudFront/latest/APIReference/CreateDistribution.html
-        
+
         def post_distribution(options = {})
           options['CallerReference'] = Time.now.to_i.to_s
           data = '<?xml version="1.0" encoding="UTF-8"?>'
@@ -82,11 +81,9 @@ module Fog
             :path       => "/distribution"
           })
         end
-
       end
 
       class Mock
-
         require 'time'
 
         def post_distribution(options = {})

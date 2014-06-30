@@ -1,5 +1,4 @@
 require 'fog/ninefold'
-require 'fog/storage'
 require 'fog/atmos'
 
 module Fog
@@ -33,7 +32,6 @@ module Fog
         def request(options)
           raise "Ninefold Storage mocks not implemented"
         end
-
       end
 
       class Real < Fog::Storage::Atmos::Real

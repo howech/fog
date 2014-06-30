@@ -3,7 +3,6 @@ require 'fog/core/model'
 module Fog
   module Compute
     class XenServer
-
       class StorageRepository < Fog::Model
         # API Reference here:
         # http://docs.vmd.citrix.com/XenServer/6.2.0/1.0/en_gb/api/?c=SR
@@ -31,11 +30,11 @@ module Fog
         attribute :virtual_allocation
 
         def vdis
-          __vdis.collect { |vdi| service.vdis.get vdi }
+          __vdis.map { |vdi| service.vdis.get vdi }
         end
 
         def pbds
-          __pbds.collect { |pbd| service.pbds.get pbd }
+          __pbds.map { |pbd| service.pbds.get pbd }
         end
 
         def scan
@@ -46,12 +45,12 @@ module Fog
         def destroy
           service.destroy_sr reference
         end
-        
+
         def save
           requires :name
           requires :type
 
-          # host is not a model attribute (not in XAPI at least), 
+          # host is not a model attribute (not in XAPI at least),
           # but we need it here
           host = attributes[:host]
           raise ArgumentError.new('host is required for this operation') unless
@@ -63,7 +62,7 @@ module Fog
           # create_sr request provides sane defaults if some attributes are
           # missing
           attr = service.get_record(
-            service.create_sr( host.reference, 
+            service.create_sr( host.reference,
                                   name,
                                   type,
                                   description || '',
@@ -74,10 +73,10 @@ module Fog
                                   sm_config || {}),
             'SR'
           )
-          merge_attributes attr 
+          merge_attributes attr
           true
         end
-        
+
         def set_attribute(name, *val)
           data = service.set_attribute( 'SR', reference, name, *val )
           # Do not reload automatically for performance reasons
@@ -85,9 +84,7 @@ module Fog
           # then reload manually
           #reload
         end
-
       end
-
     end
   end
 end

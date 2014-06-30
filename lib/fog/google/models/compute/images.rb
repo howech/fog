@@ -4,27 +4,35 @@ require 'fog/google/models/compute/image'
 module Fog
   module Compute
     class Google
-
       class Images < Fog::Collection
-
         model Fog::Compute::Google::Image
 
-        GLOBAL_PROJECTS = [ 'google',
-                            'debian-cloud',
-                            'centos-cloud',
-                            'rhel-cloud',
-                          ]
+        # NOTE: Not everyone has access to these projects because of the
+        # licenses needed to use some of them.
+        # https://developers.google.com/compute/docs/premium-operating-systems
+        GLOBAL_PROJECTS = [
+          'debian-cloud',
+          'centos-cloud',
+          'rhel-cloud',
+          'suse-cloud'
+        ]
 
         def all
           data = []
           all_projects = GLOBAL_PROJECTS + [ self.service.project ]
 
           all_projects.each do |project|
-            images = service.list_images(project).body["items"] || []
+            begin
+              images = service.list_images(project).body["items"] || []
 
-            # Keep track of the project in which we found the image(s)
-            images.each { |img| img[:project] = project }
-            data += images
+              # Keep track of the project in which we found the image(s)
+              images.each { |img| img[:project] = project }
+              data += images
+            rescue Fog::Errors::NotFound
+              # Not everyone has access to every Global Project. Requests
+              # return 404 if you don't have access.
+              next
+            end
           end
 
           load(data)
@@ -39,7 +47,7 @@ module Fog
             begin
               data = service.get_image(identity, project).body
               data[:project] = project
-            rescue Fog::Errors::Error
+            rescue Fog::Errors::NotFound
               next
             else
               break
@@ -48,14 +56,12 @@ module Fog
 
           # If it wasn't found in any project, raise
           if data.nil?
-            raise Fog::Errors::Error.new('Unable to find the specified image '\
-                                         'in the following projects: '\
-                                         "#{all_projects.join(', ')}")
+            raise Fog::Errors::NotFound.new(
+              "Unable to find the image #{identity} in the following projects: #{all_projects.join(', ')}")
           end
 
           new(data)
         end
-
       end
     end
   end

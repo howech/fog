@@ -2,7 +2,6 @@ module Fog
   module Parsers
     module Redshift
       module AWS
-
         class ClusterSecurityGroupParser < Fog::Parsers::Base
           #   :cluster_security_group_name - (String)
           #   :description - (String)
@@ -13,7 +12,7 @@ module Fog
           #   :ip_ranges - (Array)
           #     :status - (String)
           #     :cidrip - (String)
-          
+
           def reset
             @cluster_security_group = fresh_cluster_security_group
           end
@@ -31,8 +30,8 @@ module Fog
             end
           end
 
-          def end_element(name)       
-            super     
+          def end_element(name)
+            super
             case name
             when 'ClusterSecurityGroupName', 'Description'
               @cluster_security_group[name] = value

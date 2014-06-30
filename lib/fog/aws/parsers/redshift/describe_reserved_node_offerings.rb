@@ -2,7 +2,6 @@ module Fog
   module Parsers
     module Redshift
       module AWS
-
         class DescribeReservedNodeOfferings < Fog::Parsers::Base
           # :marker - (String)
           # :reserved_node_offerings - (Array)
@@ -34,7 +33,7 @@ module Fog
             end
           end
 
-          def end_element(name)            
+          def end_element(name)
             super
             case name
             when 'Marker'

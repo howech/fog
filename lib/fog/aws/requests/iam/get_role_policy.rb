@@ -2,11 +2,10 @@ module Fog
   module AWS
     class IAM
       class Real
-
         require 'fog/aws/parsers/iam/get_role_policy'
 
         # Get Role Policy
-        # 
+        #
         # ==== Parameters
         # * 'PolicyName'<~String>: Name of the policy to get
         # * 'RoleName'<~String>: Name of the Role who the policy is associated with.
@@ -29,7 +28,6 @@ module Fog
             :parser       => Fog::Parsers::AWS::IAM::GetRolePolicy.new
           })
         end
-
       end
     end
   end

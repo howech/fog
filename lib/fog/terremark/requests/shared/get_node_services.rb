@@ -2,7 +2,6 @@ module Fog
   module Terremark
     module Shared
       module Real
-
         require 'fog/terremark/parsers/shared/get_node_services'
 
         # Get a list of all internet services for a vdc
@@ -13,8 +12,8 @@ module Fog
         # ==== Returns
         # * response<~Excon::Response>:
         #   * body<~Hash>:
-       
-        #       
+
+        #
         def get_node_services(service_id)
            request(
             :expects  => 200,
@@ -24,7 +23,6 @@ module Fog
             :override_path => true
           )
         end
-
       end
     end
   end

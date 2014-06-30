@@ -1,13 +1,12 @@
 module Google # deviates from other bin stuff to accomodate gem
   class << self
-
     def class_for(key)
       case key
       when :compute
         Fog::Compute::Google
       when :storage
         Fog::Storage::Google
-      else 
+      else
         raise ArgumentError, "Unsupported #{self} service: #{key}"
       end
     end

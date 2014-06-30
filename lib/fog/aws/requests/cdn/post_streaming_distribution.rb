@@ -2,13 +2,12 @@ module Fog
   module CDN
     class AWS
       class Real
-
         require 'fog/aws/parsers/cdn/streaming_distribution'
 
         # Create a new streaming distribution in CloudFront.
         #
         # @param options [Hash] Config for distribution.
-        # 
+        #
         #   REQUIRED:
         #   * S3Origin [Hash]:
         #     * DNSName [String] Origin to associate with distribution, ie 'mybucket.s3.amazonaws.com'.
@@ -37,7 +36,7 @@ module Fog
         #         * Prefix [String] - Prefix logs are stored with.
         #
         # @see http://docs.amazonwebservices.com/AmazonCloudFront/latest/APIReference/CreateStreamingDistribution.html
-        
+
         def post_streaming_distribution(options = {})
           options['CallerReference'] = Time.now.to_i.to_s
           data = '<?xml version="1.0" encoding="UTF-8"?>'
@@ -69,12 +68,9 @@ module Fog
             :path       => "/streaming-distribution"
           })
         end
-
       end
 
-
       class Mock
-
         require 'time'
 
         def post_streaming_distribution(options = {})
@@ -114,7 +110,6 @@ module Fog
           response
         end
       end
-
     end
   end
 end

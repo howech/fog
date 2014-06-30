@@ -1,5 +1,4 @@
-require 'fog/rackspace'
-require 'fog/cdn'
+require 'fog/rackspace/core'
 
 module Fog
   module CDN
@@ -13,7 +12,6 @@ module Fog
       request :post_container
       request :put_container
       request :delete_object
-
 
       module Base
         URI_HEADERS = {
@@ -131,7 +129,6 @@ module Fog
         def reset_data
           self.class.data.delete(@rackspace_username)
         end
-
       end
 
       class Real < Fog::Rackspace::Service
@@ -144,7 +141,7 @@ module Fog
           @persistent = options[:persistent] || false
 
           if endpoint_uri
-            @connection = Fog::Connection.new(endpoint_uri.to_s, @persistent, @connection_options)
+            @connection = Fog::Core::Connection.new(endpoint_uri.to_s, @persistent, @connection_options)
             @enabled = true
           end
         end

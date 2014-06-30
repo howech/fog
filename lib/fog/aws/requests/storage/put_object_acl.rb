@@ -2,7 +2,6 @@ module Fog
   module Storage
     class AWS
       class Real
-
         require 'fog/aws/requests/storage/acl_utils'
 
         # Change access control list for an S3 object
@@ -33,10 +32,10 @@ module Fog
           if version_id = options.delete('versionId')
             query['versionId'] = version_id
           end
-          
+
           data = ""
           headers = {}
-          
+
           if acl.is_a?(Hash)
             data = Fog::Storage::AWS.hash_to_acl(acl)
           else
@@ -49,7 +48,7 @@ module Fog
           headers['Content-MD5'] = Base64.encode64(Digest::MD5.digest(data)).strip
           headers['Content-Type'] = 'application/json'
           headers['Date'] = Fog::Time.now.to_date_header
-          
+
           request({
             :body     => data,
             :expects  => 200,
@@ -61,7 +60,7 @@ module Fog
           })
         end
       end
-      
+
       class Mock
         def put_object_acl(bucket_name, object_name, acl, options = {})
           if acl.is_a?(Hash)
@@ -71,10 +70,9 @@ module Fog
               raise Excon::Errors::BadRequest.new('invalid x-amz-acl')
             end
             self.data[:acls][:object][bucket_name][object_name] = acl
-          end        
+          end
         end
       end
-
     end
   end
 end

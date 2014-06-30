@@ -2,14 +2,13 @@ module Fog
   module CDN
     class AWS
       class Real
-
         require 'fog/aws/parsers/cdn/streaming_distribution'
 
         # Update a streaming distribution in CloudFront.
         #
         # @param distribution_id [String] - Id of distribution to update config for.
         # @param options [Hash] - Config for distribution.
-        # 
+        #
         #   REQUIRED:
         #   * S3Origin [Hash]:
         #     * DNSName [String] Origin to associate with distribution, ie 'mybucket.s3.amazonaws.com'.
@@ -40,7 +39,7 @@ module Fog
         #       * TrustedSigners [Array] - Trusted signers.
         #
         # @see http://docs.amazonwebservices.com/AmazonCloudFront/latest/APIReference/PutStreamingDistribution.html
-        
+
         def put_streaming_distribution_config(distribution_id, etag, options = {})
           data = '<?xml version="1.0" encoding="UTF-8"?>'
           data << "<StreamingDistributionConfig xmlns=\"http://cloudfront.amazonaws.com/doc/#{@version}/\">"
@@ -74,11 +73,9 @@ module Fog
             :path       => "/streaming-distribution/#{distribution_id}/config"
           })
         end
-
       end
 
       class Mock
-
         def put_streaming_distribution_config(distribution_id, etag, options = {})
           distribution = self.data[:streaming_distributions][distribution_id]
 
@@ -103,7 +100,6 @@ module Fog
           end
         end
       end
-
     end
   end
 end

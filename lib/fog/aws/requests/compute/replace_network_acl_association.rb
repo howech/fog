@@ -4,7 +4,7 @@ module Fog
       class Real
         require 'fog/aws/parsers/compute/replace_network_acl_association'
 
-        # Replace the network ACL for a subnet with a 
+        # Replace the network ACL for a subnet with a
         #
         # ==== Parameters
         # * association_id<~String> - The ID of the current association between the original network ACL and the subnet
@@ -32,15 +32,15 @@ module Fog
           response = Excon::Response.new
           if self.data[:network_acls][network_acl_id]
             # find the old assoc
-            old_nacl = self.data[:network_acls].values.detect do |n|
-              n['associationSet'].detect { |assoc| assoc['networkAclAssociationId'] == association_id }
+            old_nacl = self.data[:network_acls].values.find do |n|
+              n['associationSet'].find { |assoc| assoc['networkAclAssociationId'] == association_id }
             end
 
             unless old_nacl
               raise Fog::Compute::AWS::Error.new("Invalid association_id #{association_id}")
             end
 
-            subnet_id = old_nacl['associationSet'].detect { |assoc| assoc['networkAclAssociationId'] == association_id }['subnetId']
+            subnet_id = old_nacl['associationSet'].find { |assoc| assoc['networkAclAssociationId'] == association_id }['subnetId']
             old_nacl['associationSet'].delete_if { |assoc| assoc['networkAclAssociationId'] == association_id }
 
             id = Fog::AWS::Mock.network_acl_association_id

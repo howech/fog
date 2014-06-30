@@ -2,7 +2,6 @@ module Fog
   module AWS
     class SQS
       class Real
-
         require 'fog/aws/parsers/sqs/create_queue'
 
         # Create a queue
@@ -23,14 +22,13 @@ module Fog
             :parser     => Fog::Parsers::AWS::SQS::CreateQueue.new
           }.merge!(options))
         end
-
       end
-      
+
       class Mock
         def create_queue(name, options = {})
           Excon::Response.new.tap do |response|
             response.status = 200
-            
+
             now = Time.now
             queue_url = "https://queue.amazonaws.com/#{data[:owner_id]}/#{name}"
             queue = {
@@ -49,7 +47,7 @@ module Fog
               :receipt_handles => {}
             }
             data[:queues][queue_url] = queue unless data[:queues][queue_url]
-            
+
             response.body = {
               'ResponseMetadata' => {
                 'RequestId' => Fog::AWS::Mock.request_id
@@ -57,7 +55,6 @@ module Fog
               'QueueUrl' => queue_url
             }
           end
-          
         end
       end
     end

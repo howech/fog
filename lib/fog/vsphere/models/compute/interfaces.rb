@@ -4,9 +4,7 @@ require 'fog/vsphere/models/compute/interface'
 module Fog
   module Compute
     class Vsphere
-
       class Interfaces < Fog::Collection
-
         model Fog::Compute::Vsphere::Interface
 
         attribute :server
@@ -40,10 +38,10 @@ module Fog
             raise 'interfaces should have vm or template'
           end
 
-          if interface 
+          if interface
             Fog::Compute::Vsphere::Interface.new(interface.merge(:server_id => server.id, :service => service))
           else
-            nil         
+            nil
           end
         end
 

@@ -2,11 +2,10 @@ module Fog
   module AWS
     class IAM
       class Real
-
         require 'fog/aws/parsers/iam/basic'
 
         # Add or update a policy for a role
-        # 
+        #
         # ==== Parameters
         # * role_name<~String>: name of the role
         # * policy_name<~String>: name of policy document
@@ -29,7 +28,6 @@ module Fog
             :parser           => Fog::Parsers::AWS::IAM::Basic.new
           )
         end
-
       end
     end
   end

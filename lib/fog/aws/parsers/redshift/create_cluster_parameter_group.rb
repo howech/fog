@@ -2,12 +2,11 @@ module Fog
   module Parsers
     module Redshift
       module AWS
-
         class CreateClusterParameterGroup < Fog::Parsers::Base
           # :parameter_group_name - (String)
           # :parameter_group_family - (String)
           # :description - (String)
-          
+
           def reset
             @response = {'ClusterParameterGroup'=>{}}
           end
@@ -16,7 +15,7 @@ module Fog
             super
           end
 
-          def end_element(name)     
+          def end_element(name)
             super
             case name
             when 'ParameterGroupName', 'ParameterGroupFamily', 'Description'

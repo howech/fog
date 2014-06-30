@@ -1,10 +1,8 @@
-require 'fog/hp'
-require 'fog/compute'
+require 'fog/hp/core'
 
 module Fog
   module Compute
     class HP < Fog::Service
-
       requires    :hp_secret_key, :hp_tenant_id, :hp_avl_zone
       recognizes  :hp_auth_uri, :credentials, :hp_service_type
       recognizes  :hp_use_upass_auth_style, :hp_auth_version, :user_agent
@@ -84,7 +82,6 @@ module Fog
       request :update_server
 
       module Utils
-
         # extract windows password from log
         def extract_password_from_log(log_text)
           encrypted_text = ""
@@ -122,7 +119,6 @@ module Fog
           from_base64 = Base64.decode64(encrypted_text)
           private_key.private_decrypt(from_base64).strip
         end
-
       end
 
       class Mock
@@ -170,7 +166,6 @@ module Fog
         def reset_data
           self.class.data.delete(@hp_access_key)
         end
-
       end
 
       class Real
@@ -193,7 +188,7 @@ module Fog
           ### A symbol is required, we should ensure that the value is loaded as a symbol
           auth_version = options[:hp_auth_version] || :v2
           auth_version = auth_version.to_s.downcase.to_sym
-          
+
           ### Pass the service name for compute via the options hash
           options[:hp_service_type] ||= "Compute"
           @hp_tenant_id = options[:hp_tenant_id]
@@ -221,7 +216,7 @@ module Fog
           @port   = uri.port
           @scheme = uri.scheme
 
-          @connection = Fog::Connection.new("#{@scheme}://#{@host}:#{@port}", @persistent, @connection_options)
+          @connection = Fog::XML::Connection.new("#{@scheme}://#{@host}:#{@port}", @persistent, @connection_options)
         end
 
         def reload
@@ -251,7 +246,6 @@ module Fog
           end
           response
         end
-
       end
     end
   end

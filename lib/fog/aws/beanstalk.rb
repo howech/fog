@@ -1,10 +1,10 @@
-require 'fog/aws'
+require 'fog/aws/core'
 
 module Fog
   module AWS
     class ElasticBeanstalk < Fog::Service
       extend Fog::AWS::CredentialFetcher::ServiceMethods
-      
+
       class InvalidParameterError < Fog::Errors::Error; end
 
       requires :aws_access_key_id, :aws_secret_access_key
@@ -56,11 +56,9 @@ module Fog
       collection  :versions
 
       class Mock
-
         def initialize(options={})
           Fog::Mock.not_implemented
         end
-
       end
 
       class Real
@@ -78,7 +76,7 @@ module Fog
           @persistent = options[:persistent]  || false
           @port       = options[:port]        || 443
           @scheme     = options[:scheme]      || 'https'
-          @connection = Fog::Connection.new("#{@scheme}://#{@host}:#{@port}#{@path}", @persistent, @connection_options)
+          @connection = Fog::XML::Connection.new("#{@scheme}://#{@host}:#{@port}#{@path}", @persistent, @connection_options)
         end
 
         def reload
@@ -140,11 +138,8 @@ module Fog
                     Fog::AWS::ElasticBeanstalk::Error.slurp(error, "#{match[:code]} => #{match[:message]}")
                   end
           end
-
         end
       end
-
-
     end
   end
 end

@@ -1,5 +1,4 @@
-require 'fog/aws'
-require 'fog/storage'
+require 'fog/aws/core'
 
 module Fog
   module Storage
@@ -109,7 +108,6 @@ module Fog
       request :upload_part
 
       module Utils
-
         attr_accessor :region
 
         def cdn
@@ -178,15 +176,6 @@ module Fog
 
         # NOTE: differs from Fog::AWS.escape by NOT escaping `/`
         def escape(string)
-          unless @unf_loaded_or_warned
-            begin
-              require('unf/normalizer')
-            rescue LoadError
-              Fog::Logger.warning("Unable to load the 'unf' gem. Your AWS strings may not be properly encoded.")
-            end
-            @unf_loaded_or_warned = true
-          end
-          string = defined?(::UNF::Normalizer) ? ::UNF::Normalizer.normalize(string, :nfc) : string
           string.gsub(/([^a-zA-Z0-9_.\-~\/]+)/) {
             "%" + $1.unpack("H2" * $1.bytesize).join("%").upcase
           }
@@ -270,7 +259,6 @@ module Fog
             :query  => query,
           }).to_s
         end
-
       end
 
       class Mock
@@ -363,9 +351,18 @@ module Fog
         def initialize(options={})
           @use_iam_profile = options[:use_iam_profile]
           setup_credentials(options)
-          @region = options[:region] || DEFAULT_REGION
-          @host   = options[:host]   || region_to_host(@region)
-          @scheme = options[:scheme] || DEFAULT_SCHEME
+          if @endpoint = options[:endpoint]
+            endpoint = URI.parse(@endpoint)
+            @host = endpoint.host
+            @scheme = endpoint.scheme
+            @port = endpoint.port
+          else
+            @region     = options[:region]      || DEFAULT_REGION
+            @host       = options[:host]        || region_to_host(@region)
+            @scheme     = options[:scheme]      || DEFAULT_SCHEME
+            @port       = options[:port]        || DEFAULT_SCHEME_PORT[@scheme]
+          end
+          @path_style = options[:path_style] || false
         end
 
         def data
@@ -386,7 +383,6 @@ module Fog
           @aws_session_token     = options[:aws_session_token]
           @aws_credentials_expire_at = options[:aws_credentials_expire_at]
         end
-
       end
 
       class Real
@@ -460,7 +456,6 @@ DATA
           end
           string_to_sign << canonical_amz_headers
 
-
           query_string = ''
           if params[:query]
             query_args = []
@@ -515,7 +510,7 @@ DATA
           else
             @connection = nil
           end
-          @connection ||= Fog::Connection.new(uri, @persistent, @connection_options)
+          @connection ||= Fog::XML::Connection.new(uri, @persistent, @connection_options)
         end
 
         def request(params, &block)
@@ -542,7 +537,7 @@ DATA
             headers = (error.response.is_a?(Hash) ? error.response[:headers] : error.response.headers)
             uri = URI.parse(headers['Location'])
             Fog::Logger.warning("fog: followed redirect to #{uri.host}, connecting to the matching region will be more performant")
-            response = Fog::Connection.new("#{uri.scheme}://#{uri.host}:#{uri.port}", false, @connection_options).request(original_params, &block)
+            response = Fog::XML::Connection.new("#{uri.scheme}://#{uri.host}:#{uri.port}", false, @connection_options).request(original_params, &block)
           end
 
           response

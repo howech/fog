@@ -2,13 +2,12 @@ module Fog
   module Parsers
     module Redshift
       module AWS
-
         require 'fog/aws/parsers/redshift/cluster_security_group_parser'
 
         class DescribeClusterSecurityGroups < ClusterSecurityGroupParser
           # :marker - (String)
           # :cluster_security_groups - (Array)
-          
+
           def reset
             @response = { 'ClusterSecurityGroups' => [] }
           end
@@ -21,7 +20,7 @@ module Fog
             end
           end
 
-          def end_element(name)            
+          def end_element(name)
             super
             case name
             when 'Marker'

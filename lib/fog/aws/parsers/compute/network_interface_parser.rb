@@ -2,15 +2,14 @@ module Fog
   module Parsers
     module Compute
       module AWS
-
         class NetworkInterfaceParser < Fog::Parsers::Base
-
           def reset_nic
             @nic = { 'groupSet' => {}, 'attachment' => {}, 'association' => {}, 'tagSet' => {} }
             @in_tag_set     = false
             @in_group_set   = false
             @in_attachment  = false
             @in_association = false
+            @in_private_ip_addresses = false
           end
 
           def reset
@@ -32,6 +31,10 @@ module Fog
             when 'association'
               @in_association = true
               @association    = {}
+            when 'privateIpAddressesSet'
+              @in_private_ip_addresses = true
+              @private_ip_addresses  = []
+              @private_ip_address = {}
             end
           end
 
@@ -71,6 +74,17 @@ module Fog
               when 'association'
                 @nic['association'] = @association
                 @in_association     = false
+              end
+            elsif @in_private_ip_addresses
+              case name
+              when 'item'
+                @private_ip_addresses << @private_ip_address
+                @private_ip_address = {}
+              when 'privateIpAddress', 'privateDnsName', 'primary'
+                @private_ip_address[name] = value
+              when 'privateIpAddressesSet'
+                @nic['privateIpAddresses'] = @private_ip_addresses
+                @in_private_ip_address = false
               end
             else
               case name

@@ -2,7 +2,6 @@ module Fog
   module CDN
     class AWS
       class Real
-
         require 'fog/aws/parsers/cdn/post_invalidation'
 
         # List information about distributions in CloudFront.
@@ -21,7 +20,7 @@ module Fog
         #       * CallerReference [String] - Used to prevent replay, defaults to Time.now.to_i.to_s.
         #
         # @see http://docs.amazonwebservices.com/AmazonCloudFront/latest/APIReference/CreateInvalidation.html
-        
+
         def post_invalidation(distribution_id, paths, caller_reference = Time.now.to_i.to_s)
           body = '<?xml version="1.0" encoding="UTF-8"?>'
           body << "<InvalidationBatch>"
@@ -40,11 +39,9 @@ module Fog
             :path       => "/distribution/#{distribution_id}/invalidation"
           })
         end
-
       end
 
       class Mock
-
         def post_invalidation(distribution_id, paths, caller_reference = Time.now.to_i.to_s)
           distribution = self.data[:distributions][distribution_id]
           if distribution
@@ -72,9 +69,7 @@ module Fog
             Fog::CDN::AWS::Mock.error(:no_such_distribution)
           end
         end
-
       end
-
     end
   end
 end

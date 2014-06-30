@@ -5,9 +5,7 @@ require 'net/ssh/proxy/command'
 module Fog
   module Compute
     class Libvirt
-
       class Server < Fog::Compute::Server
-
         include Fog::Compute::LibvirtUtil
         attr_reader :xml
 
@@ -117,9 +115,9 @@ module Fog
         end
 
         #alias methods
-        alias :halt    :poweroff
-        alias :stop    :shutdown
-        alias :active? :active
+        alias_method :halt,    :poweroff
+        alias_method :stop,    :shutdown
+        alias_method :active?, :active
 
         def volumes
           # lazy loading of volumes
@@ -135,7 +133,7 @@ module Fog
         end
 
         def ssh(commands)
-          requires :public_ip_address, :username
+          requires :ssh_ip_address, :username
 
           ssh_options={}
           ssh_options[:password] = password unless password.nil?
@@ -153,19 +151,19 @@ module Fog
 
         # Transfers a file
         def scp(local_path, remote_path, upload_options = {})
-          requires :public_ip_address, :username
+          requires :ssh_ip_address, :username
 
           scp_options = {}
           scp_options[:password] = password unless self.password.nil?
           scp_options[:key_data] = [private_key] if self.private_key
           scp_options[:proxy]= ssh_proxy unless self.ssh_proxy.nil?
 
-          Fog::SCP.new(public_ip_address, username, scp_options).upload(local_path, remote_path, upload_options)
+          Fog::SCP.new(ssh_ip_address, username, scp_options).upload(local_path, remote_path, upload_options)
         end
 
         # Sets up a new key
         def setup(credentials = {})
-          requires :public_key, :public_ip_address, :username
+          requires :public_key, :ssh_ip_address, :username
 
           credentials[:proxy]= ssh_proxy unless ssh_proxy.nil?
           credentials[:password] = password unless self.password.nil?
@@ -184,7 +182,7 @@ module Fog
           Timeout::timeout(360) do
             begin
               Timeout::timeout(8) do
-                Fog::SSH.new(public_ip_address, username, credentials.merge(:timeout => 4)).run('pwd')
+                Fog::SSH.new(ssh_ip_address, username, credentials.merge(:timeout => 4)).run('pwd')
               end
             rescue Errno::ECONNREFUSED
               sleep(2)
@@ -193,7 +191,7 @@ module Fog
               retry
             end
           end
-          Fog::SSH.new(public_ip_address, username, credentials).run(commands)
+          Fog::SSH.new(ssh_ip_address, username, credentials).run(commands)
         end
 
         def update_display attrs = {}
@@ -241,7 +239,6 @@ module Fog
             ssh_options[:port]=port unless keyfile.nil?
             ssh_options[:paranoid]=true if service.uri.no_verify?
 
-
             begin
               result=Fog::SSH.new(host, user, ssh_options).run(ip_command)
             rescue Errno::ECONNREFUSED
@@ -249,7 +246,6 @@ module Fog
             rescue Net::SSH::AuthenticationFailed
               raise Fog::Errors::Error.new("Error authenticating over ssh to host #{host} and user #{user}")
             end
-
 
             # Check for a clean exit code
             if result.first.status == 0
@@ -282,7 +278,6 @@ module Fog
             #Strip any new lines from the string
             ip_address=ip_address.chomp
           end
-
 
           # The Ip-address command has been run either local or remote now
 
@@ -390,10 +385,7 @@ module Fog
         def default_display
           {:port => '-1', :listen => '127.0.0.1', :type => 'vnc', :password => '' }
         end
-
       end
-
     end
   end
-
 end

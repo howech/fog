@@ -2,11 +2,10 @@ module Fog
   module AWS
     class IAM
       class Real
-
         require 'fog/aws/parsers/iam/get_user'
 
         # Get User
-        # 
+        #
         # ==== Parameters
         # * username<String>
         # * options<~Hash>:
@@ -31,16 +30,15 @@ module Fog
             :parser     => Fog::Parsers::AWS::IAM::GetUser.new
           }.merge!(options))
         end
-
       end
-      
+
       class Mock
         def get_user(user, options = {})
           raise Fog::AWS::IAM::NotFound.new(
             "The user with name #{user} cannot be found."
           ) unless self.data[:users].key?(user)
           Excon::Response.new.tap do |response|
-            response.body = {'User' =>  { 
+            response.body = {'User' =>  {
                                           'UserId'     => data[:users][user][:user_id],
                                           'Path'       => data[:users][user][:path],
                                           'UserName'   => user,

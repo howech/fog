@@ -13,7 +13,6 @@ module Fog
 
       class Mock
         def get_agent(agent_id)
-
           if agent_id == -1
             raise Fog::Rackspace::Monitoring::NotFound
           end
@@ -21,7 +20,7 @@ module Fog
           response = Excon::Response.new
           response.status = 200
           response.body = {
-                "id"              => Fog::Rackspace::MockData.uuid,  
+                "id"              => Fog::Rackspace::MockData.uuid,
                 "last_connected"  => Time.now.to_i - 100,
           }
           response.headers = {

@@ -2,7 +2,6 @@ module Fog
   module AWS
     class RDS
       class Real
-
         require 'fog/aws/parsers/rds/describe_db_snapshots'
 
         # Describe all or specified db snapshots
@@ -12,7 +11,7 @@ module Fog
         # * DBSnapshotIdentifier <~String> - ID of snapshot to retrieve information for. if absent information for all snapshots is returned
         # * SnapshotType       <~String> - type of snapshot to retrive (automated|manual)
         # * Marker               <~String> - An optional marker provided in the previous DescribeDBInstances request
-        # * MaxRecords           <~Integer> - Max number of records to return (between 20 and 100) 
+        # * MaxRecords           <~Integer> - Max number of records to return (between 20 and 100)
         # Only one of DBInstanceIdentifier or DBSnapshotIdentifier can be specified
         # ==== Returns
         # * response<~Excon::Response>:
@@ -29,11 +28,9 @@ module Fog
             :parser   => Fog::Parsers::AWS::RDS::DescribeDBSnapshots.new
           }.merge(params))
         end
-
       end
 
       class Mock
-
         def describe_db_snapshots(opts={})
           response = Excon::Response.new
           snapshots = self.data[:snapshots].values
@@ -62,9 +59,7 @@ module Fog
             "DescribeDBSnapshotsResult" => { "DBSnapshots" => snapshots }
           }
           response
-
         end
-
       end
     end
   end

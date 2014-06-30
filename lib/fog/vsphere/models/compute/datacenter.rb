@@ -1,9 +1,7 @@
 module Fog
   module Compute
     class Vsphere
-
       class Datacenter < Fog::Model
-
         identity :id
         attribute :name
         attribute :path
@@ -28,7 +26,7 @@ module Fog
         def virtual_machines filters = {}
           service.servers({ :datacenter => path.join("/") }.merge(filters))
         end
-        
+
         def servertypes filters={}
           service.servertypes({:datacenter => name }.merge(filters))
         end
@@ -40,9 +38,7 @@ module Fog
         def to_s
           name
         end
-
       end
-
     end
   end
 end

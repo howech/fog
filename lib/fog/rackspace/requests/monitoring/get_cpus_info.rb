@@ -2,7 +2,6 @@ module Fog
   module Rackspace
     class Monitoring
       class Real
-
         def get_cpus_info(agent_id)
           request(
             :expects  => [200, 203],
@@ -14,7 +13,6 @@ module Fog
 
       class Mock
         def get_cpus_info(agent_id)
-
           if agent_id == -1
             raise Fog::Rackspace::Monitoring::BadRequest
           end
@@ -35,7 +33,7 @@ module Fog
                 "stolen"          => Fog::Mock.random_numbers(7).to_i,
                 "sys"             => Fog::Mock.random_numbers(7).to_i,
                 "user"            => Fog::Mock.random_numbers(9).to_i,
-                "wait"            => Fog::Mock.random_numbers(7).to_i,  
+                "wait"            => Fog::Mock.random_numbers(7).to_i,
                 "total"           => Fog::Mock.random_numbers(11).to_i,
                 "total_cores"     => 1,
                 "total_sockets"   => 1

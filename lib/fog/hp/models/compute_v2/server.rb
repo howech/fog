@@ -4,9 +4,7 @@ require 'fog/hp/models/compute_v2/metadata'
 module Fog
   module Compute
     class HPV2
-
       class Server < Fog::Compute::Server
-
         identity  :id
 
         attribute :addresses
@@ -296,8 +294,8 @@ module Fog
         end
 
         def setup(credentials = {})
-          requires :public_ip_address, :identity, :public_key, :username
-          Fog::SSH.new(public_ip_address, username, credentials).run([
+          requires :ssh_ip_address, :identity, :public_key, :username
+          Fog::SSH.new(ssh_ip_address, username, credentials).run([
             %{mkdir .ssh},
             %{echo "#{public_key}" >> ~/.ssh/authorized_keys},
             %{passwd -l #{username}},
@@ -330,10 +328,7 @@ module Fog
           return '' if net.first.nil?
           net.first[0]
         end
-
       end
-
     end
   end
-
 end

@@ -4,9 +4,7 @@ require 'fog/hp/models/compute/metadata'
 module Fog
   module Compute
     class HP
-
       class Server < Fog::Compute::Server
-
         identity :id
 
         attribute :addresses
@@ -267,8 +265,8 @@ module Fog
         end
 
         def setup(credentials = {})
-          requires :public_ip_address, :identity, :public_key, :username
-          Fog::SSH.new(public_ip_address, username, credentials).run([
+          requires :ssh_ip_address, :identity, :public_key, :username
+          Fog::SSH.new(ssh_ip_address, username, credentials).run([
             %{mkdir .ssh},
             %{echo "#{public_key}" >> ~/.ssh/authorized_keys},
             %{passwd -l #{username}},
@@ -289,10 +287,7 @@ module Fog
         def adminPass=(new_admin_pass)
           @password = new_admin_pass
         end
-
       end
-
     end
   end
-
 end

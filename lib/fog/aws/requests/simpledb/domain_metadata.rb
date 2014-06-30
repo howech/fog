@@ -2,7 +2,6 @@ module Fog
   module AWS
     class SimpleDB
       class Real
-
         require 'fog/aws/parsers/simpledb/domain_metadata'
 
         # List metadata for SimpleDB domain
@@ -31,16 +30,14 @@ module Fog
             :parser       => Fog::Parsers::AWS::SimpleDB::DomainMetadata.new(@nil_string)
           )
         end
-
       end
 
       class Mock
-
         def domain_metadata(domain_name)
           response = Excon::Response.new
           if domain = self.data[:domains][domain_name]
             response.status = 200
-          
+
             attribute_names = []
             attribute_values = []
             for item in domain.values
@@ -51,7 +48,7 @@ module Fog
                 end
               end
             end
-          
+
             response.body = {
               'AttributeNameCount'        => attribute_names.length,
               'AttributeNamesSizeBytes'   => attribute_names.join('').length,
@@ -69,7 +66,6 @@ module Fog
           end
           response
         end
-
       end
     end
   end

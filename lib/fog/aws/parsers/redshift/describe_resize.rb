@@ -2,7 +2,6 @@ module Fog
   module Parsers
     module Redshift
       module AWS
-
         class DescribeResize < Fog::Parsers::Base
           # :target_node_type - (String)
           # :target_number_of_nodes - (Integer)
@@ -14,7 +13,6 @@ module Fog
           def reset
             @response = { 'ImportTablesCompleted' => [], 'ImportTablesInProgress' => [], 'ImportTablesNotStarted' => []}
           end
-
 
           def start_element(name, attrs = [])
             super
@@ -28,8 +26,8 @@ module Fog
             end
           end
 
-          def end_element(name) 
-            super           
+          def end_element(name)
+            super
             case name
             when 'TargetNodeType', 'TargetClusterType', 'Status'
               @response[name] = value

@@ -2,7 +2,6 @@ module Fog
   module AWS
     class Elasticache
       class Real
-
         require 'fog/aws/parsers/elasticache/base'
 
         # deletes a cache parameter group
@@ -23,7 +22,17 @@ module Fog
 
       class Mock
         def delete_cache_parameter_group(name)
-          Fog::Mock.not_implemented
+          response = Excon::Response.new
+
+          if self.data[:parameter_groups].delete(name)
+            response.status = 200
+            response.body = {
+              "ResponseMetadata"=>{ "RequestId"=> Fog::AWS::Mock.request_id },
+            }
+            response
+          else
+            raise Fog::AWS::Elasticache::NotFound.new("CacheParameterGroup not found: #{name}")
+          end
         end
       end
     end

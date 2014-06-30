@@ -2,7 +2,6 @@ module Fog
   module AWS
     class CloudFormation
       class Real
-
         require 'fog/aws/parsers/cloud_formation/describe_stack_resources'
 
         # Describe stack resources.
@@ -26,14 +25,13 @@ module Fog
         #         * ResourceStatus [String] -
         #
         # @see http://docs.amazonwebservices.com/AWSCloudFormation/latest/APIReference/API_DescribeStackResources.html
-        
+
         def describe_stack_resources(options = {})
           request({
             'Action'    => 'DescribeStackResources',
             :parser     => Fog::Parsers::AWS::CloudFormation::DescribeStackResources.new
           }.merge!(options))
         end
-
       end
     end
   end

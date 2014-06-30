@@ -36,8 +36,7 @@ module Fog
         def populate_uris(options = {})
           options[:vdc_id] || raise("vdc_id option is required")
           options[:vdc_uri] =  vdc_end_point(options[:vdc_id])
-          options[:network_id] || raise("network_id option is required")
-          options[:network_uri] = network_end_point(options[:network_id])
+          options[:network_uri] = network_end_point(options[:network_id]) if options[:network_id]
           options[:template_uri] = vapp_template_end_point(options[:template_id]) || raise("template_id option is required")
           options
         end
@@ -74,15 +73,15 @@ module Fog
             "xmlns:xsd" => "http://www.w3.org/2001/XMLSchema"
           }
         end
-        
+
         def vdc_end_point(vdc_id = nil)
           end_point + ( vdc_id ? "vdc/#{vdc_id}" : "vdc" )
         end
-        
+
         def network_end_point(network_id = nil)
           end_point + ( network_id ? "network/#{network_id}" : "network" )
         end
-        
+
         def vapp_template_end_point(vapp_template_id = nil)
           end_point + ( vapp_template_id ? "vAppTemplate/#{vapp_template_id}" : "vAppTemplate" )
         end
@@ -90,7 +89,6 @@ module Fog
         def endpoint
           end_point
         end
-        
       end
     end
   end
